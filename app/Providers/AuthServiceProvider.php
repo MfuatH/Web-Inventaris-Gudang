@@ -31,6 +31,8 @@ class AuthServiceProvider extends ServiceProvider
             return $user->role === 'super_admin';
         });
 
+        Gate::define('user', fn(User $user) => $user->role === 'user');
+
         // Gate untuk Super Admin & Admin Barang
         Gate::define('manage_items', function (User $user) {
             return in_array($user->role, ['super_admin', 'admin_barang']);

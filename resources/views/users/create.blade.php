@@ -38,21 +38,21 @@
                             <div>
                                 <x-input-label for="role" :value="__('Role')" />
                                 <select name="role" id="role" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
-                                    <option value="user">User</option>
-                                    <option value="admin_barang">Admin Barang</option>
-                                    {{-- Opsi Super Admin dihapus --}}
+                                    <option value="user" @if(old('role') == 'user') selected @endif>User</option>
+                                    <option value="admin_barang" @if(old('role') == 'admin_barang') selected @endif>Admin Barang</option>
+                                    <option value="super_admin" @if(old('role') == 'super_admin') selected @endif>Super Admin</option>
                                 </select>
                             </div>
 
                             <div>
-                                <x-input-label for="bidang" :value="__('Bidang')" />
-                                <select name="bidang" id="bidang" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
-                                    <option value="">-- Pilih Bidang --</option>
-                                    <option value="sekretariat">Sekretariat</option>
-                                    <option value="psda">PSDA</option>
-                                    <option value="irigasi">Irigasi</option>
-                                    <option value="swp">SWP</option>
-                                    <option value="binfat">BINFAT</option>
+                                <x-input-label for="id_bidang" :value="__('Bidang')" />
+                                <select name="id_bidang" id="id_bidang" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                    <option value="">-- Pilih Bidang (Jika Bukan Super Admin) --</option>
+                                    @foreach ($bidang as $b)
+                                        <option value="{{ $b->id }}" @if(old('id_bidang') == $b->id) selected @endif>
+                                            {{ $b->nama_bidang }}
+                                        </option>
+                                    @endforeach
                                 </select>
                             </div>
 

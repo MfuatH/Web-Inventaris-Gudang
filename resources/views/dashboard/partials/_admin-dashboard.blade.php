@@ -60,3 +60,39 @@
         </div>
     </div>
 </div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+
+    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+        <div class="p-6">
+            <h3 class="text-lg font-semibold mb-4">Top 5 Barang Masuk (7 Hari)</h3>
+            <ul class="space-y-2">
+                @forelse ($topItemsIn as $transaction)
+                    <li class="flex justify-between items-center text-sm">
+                        <span>{{ $transaction->item->nama_barang }}</span>
+                        <span class="font-bold px-2 py-1 bg-green-100 text-green-800 rounded-full">{{ $transaction->total_jumlah }}</span>
+                    </li>
+                @empty
+                    <li class="text-center text-gray-500">Tidak ada barang masuk.</li>
+                @endforelse
+            </ul>
+        </div>
+    </div>
+
+    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+        <div class="p-6">
+            <h3 class="text-lg font-semibold mb-4">Top 5 Barang Keluar (7 Hari)</h3>
+            <ul class="space-y-2">
+                @forelse ($topItemsOut as $transaction)
+                    <li class="flex justify-between items-center text-sm">
+                        <span>{{ $transaction->item->nama_barang }}</span>
+                        <span class="font-bold px-2 py-1 bg-red-100 text-red-800 rounded-full">{{ $transaction->total_jumlah }}</span>
+                    </li>
+                @empty
+                    <li class="text-center text-gray-500">Tidak ada barang keluar.</li>
+                @endforelse
+            </ul>
+        </div>
+    </div>
+    
+</div>

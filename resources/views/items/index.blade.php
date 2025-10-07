@@ -27,6 +27,7 @@
                                     <th class="py-3 px-4 uppercase font-semibold text-sm text-left">Kode</th>
                                     <th class="py-3 px-4 uppercase font-semibold text-sm text-left">Nama Barang</th>
                                     <th class="py-3 px-4 uppercase font-semibold text-sm text-left">Jumlah</th>
+                                    <th class="py-3 px-4 uppercase font-semibold text-sm text-left">Satuan</th> <!-- DIUBAH -->
                                     <th class="py-3 px-4 uppercase font-semibold text-sm text-left">Lokasi</th>
                                     <th class="py-3 px-4 uppercase font-semibold text-sm text-left">Keterangan</th>
                                     <th class="py-3 px-4 uppercase font-semibold text-sm text-left">Aksi</th>
@@ -38,6 +39,7 @@
                                     <td class="py-3 px-4">{{ $item->kode_barang }}</td>
                                     <td class="py-3 px-4">{{ $item->nama_barang }}</td>
                                     <td class="py-3 px-4 font-bold">{{ $item->jumlah }}</td>
+                                    <td class="py-3 px-4">{{ $item->satuan ?? 'unit' }}</td> <!-- DIUBAH -->
                                     <td class="py-3 px-4">{{ $item->lokasi }}</td>
                                     <td class="py-3 px-4">{{ $item->keterangan ?? '-' }}</td>
                                     <td class="py-3 px-4 whitespace-nowrap">
@@ -61,7 +63,7 @@
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="6" class="text-center py-4">Tidak ada data barang.</td>
+                                    <td colspan="7" class="text-center py-4">Tidak ada data barang.</td> <!-- DIUBAH -->
                                 </tr>
                                 @endforelse
                             </tbody>

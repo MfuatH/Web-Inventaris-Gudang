@@ -23,6 +23,7 @@ class ItemController extends Controller
                 $q->where('kode_barang', 'like', "%{$search}%")
                   ->orWhere('nama_barang', 'like', "%{$search}%")
                   ->orWhere('lokasi', 'like', "%{$search}%")
+                  ->orWhere('satuan', 'like', "%{$search}%") // Ditambahkan
                   ->orWhere('keterangan', 'like', "%{$search}%");
             });
         }
@@ -44,10 +45,11 @@ class ItemController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'kode_barang' => 'required|string|max:255|unique:items,kode_barang',
+        // DIUBAH: Validasi untuk 'satuan' ditambahkan
+        $validatedData = $request->validate([
             'nama_barang' => 'required|string|max:255',
             'jumlah' => 'required|integer|min:0',
+            'satuan' => 'nullable|string|max:255',
             'lokasi' => 'required|string|max:255',
             'keterangan' => 'nullable|string',
         ]);
@@ -55,10 +57,8 @@ class ItemController extends Controller
         try {
             DB::beginTransaction();
             
-            // 1. Buat item baru
-            $item = Item::create($request->all());
+            $item = Item::create($validatedData);
 
-            // 2. Jika jumlah awal lebih dari 0, catat sebagai transaksi masuk
             if ($item->jumlah > 0) {
                 Transaction::create([
                     'item_id' => $item->id,
@@ -74,12 +74,12 @@ class ItemController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withInput()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan data.']);
+            return back()->withInput()->withErrors(['error' => 'Gagal menyimpan data: ' . $e->getMessage()]);
         }
     }
 
     /**
-     * Menampilkan form untuk mengedit informasi barang (bukan stok).
+     * Menampilkan form untuk mengedit informasi barang.
      */
     public function edit(Item $item)
     {
@@ -87,19 +87,20 @@ class ItemController extends Controller
     }
 
     /**
-     * Memperbarui data barang (nama, lokasi, dll.), BUKAN jumlah stok.
+     * Memperbarui data barang.
      */
     public function update(Request $request, Item $item)
     {
-        $request->validate([
+        // DIUBAH: Validasi untuk 'satuan' ditambahkan
+        $validatedData = $request->validate([
             'kode_barang' => ['required', 'string', 'max:255', Rule::unique('items')->ignore($item->id)],
             'nama_barang' => 'required|string|max:255',
+            'satuan' => 'nullable|string|max:255',
             'lokasi' => 'required|string|max:255',
             'keterangan' => 'nullable|string',
-            // Kolom 'jumlah' sengaja dihilangkan dari validasi ini
         ]);
 
-        $item->update($request->except('jumlah')); // Update semua kecuali 'jumlah'
+        $item->update($validatedData);
 
         return redirect()->route('items.index')->with('success', 'Data barang berhasil diperbarui.');
     }
@@ -109,7 +110,6 @@ class ItemController extends Controller
      */
     public function destroy(Item $item)
     {
-        // Pengecekan keamanan: jangan hapus item jika sudah ada transaksi
         if ($item->transactions()->exists() || $item->requests()->exists()) {
             return back()->withErrors(['error' => 'Barang tidak dapat dihapus karena memiliki riwayat transaksi atau request.']);
         }
@@ -120,17 +120,11 @@ class ItemController extends Controller
 
     // --- FUNGSI TAMBAH STOK ---
 
-    /**
-     * Menampilkan form untuk menambah stok.
-     */
     public function addStockForm(Item $item)
     {
         return view('items.add-stock', compact('item'));
     }
 
-    /**
-     * Menyimpan penambahan stok dan mencatatnya sebagai transaksi masuk.
-     */
     public function storeStock(Request $request, Item $item)
     {
         $request->validate([
@@ -140,11 +134,7 @@ class ItemController extends Controller
 
         try {
             DB::beginTransaction();
-
-            // 1. Tambah jumlah di tabel items
             $item->increment('jumlah', $request->jumlah_masuk);
-
-            // 2. Buat catatan di tabel transactions
             Transaction::create([
                 'item_id' => $item->id,
                 'jumlah' => $request->jumlah_masuk,
@@ -162,3 +152,4 @@ class ItemController extends Controller
         }
     }
 }
+

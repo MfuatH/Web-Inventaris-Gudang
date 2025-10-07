@@ -8,7 +8,7 @@
         <link rel="stylesheet" href="{{ mix('css/app.css') }}">
         <script src="{{ mix('js/app.js') }}" defer></script>
     </head>
-    <body class="antialiased" style="background-image: url('{{ asset('images/background.jpeg') }}'); background-size: cover; background-position: center;">
+    <body class="antialiased" style="background-image: url('{{ asset('images/river.jpg') }}'); background-size: cover; background-position: center;">
         <div class="font-sans text-gray-900">
             <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0">
                 <div>

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('nama_barang');
             $table->integer('jumlah');
             $table->string('lokasi');
+            $table->string('satuan')->nullable()->default('unit'); 
             $table->text('keterangan')->nullable();
             $table->timestamps();
         });

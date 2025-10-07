@@ -6,7 +6,7 @@ use App\Models\User;
 use App\Models\Item;
 use App\Models\Request as ItemRequest;
 use App\Models\Transaction;
-use Illuminate\Http\Request; // Disarankan untuk ditambahkan
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -38,32 +38,18 @@ class DashboardController extends Controller
             $dataMasuk = $chartData->pluck('total_masuk');
             $dataKeluar = $chartData->pluck('total_keluar');
 
-            // DITAMBAHKAN: Query untuk mengambil 5 barang paling sering masuk (7 hari)
-            $topItemsIn = Transaction::with('item')
-                ->where('tipe', 'masuk')
-                ->where('tanggal', '>=', now()->subDays(7))
-                ->select('item_id', DB::raw('SUM(jumlah) as total_jumlah'))
-                ->groupBy('item_id')
-                ->orderByDesc('total_jumlah')
-                ->limit(5)
-                ->get();
+            // DIPERBAIKI: Menggunakan kolom 'jumlah' yang benar
+            $lowStockItems = Item::where('jumlah', '<=', 5)
+                                 ->orderBy('jumlah', 'asc') // Diurutkan dari stok paling sedikit
+                                 ->limit(5) // Mengambil 5 teratas saja
+                                 ->get();
 
-            // DITAMBAHKAN: Query untuk mengambil 5 barang paling sering keluar (7 hari)
-            $topItemsOut = Transaction::with('item')
-                ->where('tipe', 'keluar')
-                ->where('tanggal', '>=', now()->subDays(7))
-                ->select('item_id', DB::raw('SUM(jumlah) as total_jumlah'))
-                ->groupBy('item_id')
-                ->orderByDesc('total_jumlah')
-                ->limit(5)
-                ->get();
-
-            // DIUBAH: Mengirimkan semua data ke view
+            // Mengirimkan semua data ke view
             return view('dashboard', compact(
                 'totalUsers', 'totalItems', 'pendingRequests', 
                 'todayTransactions', 
                 'labels', 'dataMasuk', 'dataKeluar',
-                'topItemsIn', 'topItemsOut'
+                'lowStockItems' // Mengirim data barang stok tipis
             ));
         
         // JIKA USER ADALAH USER BIASA

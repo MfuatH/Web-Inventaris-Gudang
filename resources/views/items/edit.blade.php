@@ -1,41 +1,76 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             Edit Barang: {{ $item->nama_barang }}
         </h2>
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200">
-                    <form method="POST" action="{{ route('items.update', $item->id) }}">
+        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900 dark:text-gray-100">
+                    
+                    @if ($errors->any())
+                        <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                            <strong class="font-bold">Error!</strong>
+                            <ul class="mt-2 list-disc list-inside text-sm">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    <form method="POST" action="{{ route('items.update', $item) }}">
                         @csrf
                         @method('PUT')
-                        <div>
-                            <label for="nama_barang">Nama Barang</label>
-                            <input id="nama_barang" class="block mt-1 w-full" type="text" name="nama_barang" value="{{ $item->nama_barang }}" required autofocus />
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Kode Barang -->
+                            <div>
+                                <x-input-label for="kode_barang" value="Kode Barang" />
+                                <x-text-input id="kode_barang" class="block mt-1 w-full" type="text" name="kode_barang" :value="old('kode_barang', $item->kode_barang)" required />
+                            </div>
+
+                            <!-- Nama Barang -->
+                            <div>
+                                <x-input-label for="nama_barang" value="Nama Barang" />
+                                <x-text-input id="nama_barang" class="block mt-1 w-full" type="text" name="nama_barang" :value="old('nama_barang', $item->nama_barang)" required autofocus />
+                            </div>
+
+                             <!-- Jumlah (Readonly) -->
+                            <div>
+                                <x-input-label for="jumlah" value="Jumlah Stok Saat Ini" />
+                                <x-text-input id="jumlah" class="block mt-1 w-full bg-gray-100 dark:bg-gray-700" type="number" name="jumlah" :value="$item->jumlah" readonly disabled />
+                                <small class="text-xs text-gray-500">Jumlah hanya bisa diubah melalui fitur "Tambah Stok".</small>
+                            </div>
+
+                            <!-- Satuan -->
+                            <div>
+                                <x-input-label for="satuan" value="Satuan (e.g., unit, pack, box)" />
+                                <x-text-input id="satuan" class="block mt-1 w-full" type="text" name="satuan" :value="old('satuan', $item->satuan)" />
+                            </div>
+
+                            <!-- Lokasi -->
+                            <div class="md:col-span-2">
+                                <x-input-label for="lokasi" value="Lokasi Penyimpanan" />
+                                <x-text-input id="lokasi" class="block mt-1 w-full" type="text" name="lokasi" :value="old('lokasi', $item->lokasi)" required />
+                            </div>
+
+                            <!-- Keterangan -->
+                            <div class="md:col-span-2">
+                                <x-input-label for="keterangan" value="Keterangan (Opsional)" />
+                                <textarea id="keterangan" name="keterangan" rows="4" class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">{{ old('keterangan', $item->keterangan) }}</textarea>
+                            </div>
                         </div>
 
-                        <div class="mt-4">
-                            <label for="jumlah">Jumlah</label>
-                            <input id="jumlah" class="block mt-1 w-full" type="number" name="jumlah" value="{{ $item->jumlah }}" required />
-                        </div>
-
-                        <div class="mt-4">
-                            <label for="lokasi">Lokasi</label>
-                            <input id="lokasi" class="block mt-1 w-full" type="text" name="lokasi" value="{{ $item->lokasi }}" required />
-                        </div>
-
-                        <div class="mt-4">
-                            <label for="keterangan">Keterangan (Opsional)</label>
-                            <textarea id="keterangan" name="keterangan" class="block mt-1 w-full">{{ $item->keterangan }}</textarea>
-                        </div>
-
-                        <div class="flex items-center justify-end mt-4">
-                            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                Update
-                            </button>
+                        <div class="flex items-center justify-end mt-6">
+                             <a href="{{ route('items.index') }}" class="text-sm text-gray-600 dark:text-gray-400 underline hover:text-gray-900 dark:hover:text-gray-100 mr-4">
+                                Batal
+                            </a>
+                            <x-primary-button>
+                                {{ __('Update Barang') }}
+                            </x-primary-button>
                         </div>
                     </form>
                 </div>

@@ -24,29 +24,29 @@
                 </div>
             </div>
             
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 gap-6">
                 @if(in_array(auth()->user()->role, ['super_admin', 'admin_barang']))
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 bg-white border-b border-gray-200">
-                        <h3 class="text-lg font-semibold mb-4">Grafik Transaksi Barang</h3>
-                        <canvas id="transactionChart"></canvas>
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                        <div class="p-6 bg-white border-b border-gray-200">
+                            <h3 class="text-lg font-semibold mb-4">Grafik Transaksi Barang</h3>
+                            <canvas id="transactionChart"></canvas>
+                        </div>
                     </div>
-                </div>
-                
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 bg-white border-b border-gray-200">
-                        <h3 class="text-lg font-semibold mb-4">Grafik Stock Barang</h3>
-                        <canvas id="stockChart"></canvas>
+                    
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                        <div class="p-6 bg-white border-b border-gray-200">
+                            <h3 class="text-lg font-semibold mb-4">Grafik Stok Barang Saat Ini</h3>
+                            <canvas id="stockChart"></canvas>
+                        </div>
                     </div>
-                </div>
                 
                 @elseif(auth()->user()->role == 'user')
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 bg-white border-b border-gray-200">
-                        <h3 class="text-lg font-semibold mb-4">Grafik Stok Barang Tersedia</h3>
-                        <canvas id="availableItemsChart"></canvas>
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                        <div class="p-6 bg-white border-b border-gray-200">
+                            <h3 class="text-lg font-semibold mb-4">Grafik Stok Barang Tersedia</h3>
+                            <canvas id="availableItemsChart"></canvas>
+                        </div>
                     </div>
-                </div>
                 @endif
             </div>
         </div>
@@ -54,54 +54,53 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    @if(in_array(auth()->user()->role, ['super_admin', 'admin_barang']) && isset($chartData))
-    <script>
-        // Grafik Transaksi Barang
-        const ctx = document.getElementById('transactionChart').getContext('2d');
-        const chartData = @json($chartData);
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Barang Masuk', 'Barang Keluar'],
-                datasets: [{
-                    label: '# of Transactions', data: [chartData.in, chartData.out],
-                    backgroundColor: ['rgba(75, 192, 192, 0.2)', 'rgba(255, 99, 132, 0.2)'],
-                    borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'],
-                    borderWidth: 1
-                }]
-            },
-            options: { scales: { y: { beginAtZero: true } } }
-        });
-
-        // Grafik Stock Barang
-        @if(isset($stockChartData))
-        const stockCtx = document.getElementById('stockChart').getContext('2d');
-        const stockChartData = @json($stockChartData);
-        new Chart(stockCtx, {
-            type: 'bar',
-            data: {
-                labels: stockChartData.labels,
-                datasets: [{
-                    label: 'Jumlah Stock',
-                    data: stockChartData.data,
-                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                indexAxis: 'y',
-                scales: {
-                    x: { beginAtZero: true },
-                    y: { ticks: { maxRotation: 0, minRotation: 0 } }
+    @if(in_array(auth()->user()->role, ['super_admin', 'admin_barang']))
+        @if(isset($chartData))
+        <script>
+            // Grafik Transaksi (Bar Chart)
+            const ctx = document.getElementById('transactionChart').getContext('2d');
+            const chartData = @json($chartData);
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Barang Masuk', 'Barang Keluar'],
+                    datasets: [{
+                        label: '# of Transactions', data: [chartData.in, chartData.out],
+                        backgroundColor: ['rgba(75, 192, 192, 0.2)', 'rgba(255, 99, 132, 0.2)'],
+                        borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'],
+                        borderWidth: 1
+                    }]
                 },
-                plugins: {
-                    legend: { display: false }
-                }
-            }
-        });
+                options: { scales: { y: { beginAtZero: true } } }
+            });
+        </script>
         @endif
-    </script>
+
+        @if(isset($stockChartData))
+        <script>
+            // Grafik Stok Barang (Horizontal Bar Chart)
+            const stockCtx = document.getElementById('stockChart').getContext('2d');
+            const stockChartData = @json($stockChartData);
+            new Chart(stockCtx, {
+                type: 'bar',
+                data: {
+                    labels: stockChartData.labels,
+                    datasets: [{
+                        label: 'Jumlah Stok',
+                        data: stockChartData.data,
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    scales: { x: { beginAtZero: true } },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        </script>
+        @endif
     @endif
 
     @if(auth()->user()->role == 'user' && isset($chartDataUser))
@@ -123,5 +122,4 @@
         });
     </script>
     @endif
-    
 </x-app-layout>

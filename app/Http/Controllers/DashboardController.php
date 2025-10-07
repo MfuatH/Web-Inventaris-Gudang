@@ -22,13 +22,20 @@ class DashboardController extends Controller
             $transactionsIn = Transaction::where('tipe', 'masuk')->count();
             $transactionsOut = Transaction::where('tipe', 'keluar')->count();
 
+            // Data untuk grafik stock barang
+            $stockItems = Item::orderBy('nama_barang')->get();
+            $stockChartData = [
+                'labels' => $stockItems->pluck('nama_barang'),
+                'data' => $stockItems->pluck('jumlah'),
+            ];
+
             $chartData = [
                 'in' => $transactionsIn,
                 'out' => $transactionsOut,
             ];
 
             // Data khusus Super Admin
-            $viewData = compact('totalItems', 'pendingRequests', 'chartData');
+            $viewData = compact('totalItems', 'pendingRequests', 'chartData', 'stockChartData');
             if ($user->role === 'super_admin') {
                 $viewData['totalUsers'] = User::count();
             }

@@ -24,18 +24,30 @@
                 </div>
             </div>
             
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200">
-                    
-                    @if(in_array(auth()->user()->role, ['super_admin', 'admin_barang']))
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                @if(in_array(auth()->user()->role, ['super_admin', 'admin_barang']))
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6 bg-white border-b border-gray-200">
                         <h3 class="text-lg font-semibold mb-4">Grafik Transaksi Barang</h3>
                         <canvas id="transactionChart"></canvas>
-                    @elseif(auth()->user()->role == 'user')
+                    </div>
+                </div>
+                
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6 bg-white border-b border-gray-200">
+                        <h3 class="text-lg font-semibold mb-4">Grafik Stock Barang</h3>
+                        <canvas id="stockChart"></canvas>
+                    </div>
+                </div>
+                
+                @elseif(auth()->user()->role == 'user')
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6 bg-white border-b border-gray-200">
                         <h3 class="text-lg font-semibold mb-4">Grafik Stok Barang Tersedia</h3>
                         <canvas id="availableItemsChart"></canvas>
-                    @endif
-                    
+                    </div>
                 </div>
+                @endif
             </div>
         </div>
     </div>
@@ -44,6 +56,7 @@
 
     @if(in_array(auth()->user()->role, ['super_admin', 'admin_barang']) && isset($chartData))
     <script>
+        // Grafik Transaksi Barang
         const ctx = document.getElementById('transactionChart').getContext('2d');
         const chartData = @json($chartData);
         new Chart(ctx, {
@@ -59,6 +72,35 @@
             },
             options: { scales: { y: { beginAtZero: true } } }
         });
+
+        // Grafik Stock Barang
+        @if(isset($stockChartData))
+        const stockCtx = document.getElementById('stockChart').getContext('2d');
+        const stockChartData = @json($stockChartData);
+        new Chart(stockCtx, {
+            type: 'bar',
+            data: {
+                labels: stockChartData.labels,
+                datasets: [{
+                    label: 'Jumlah Stock',
+                    data: stockChartData.data,
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                scales: {
+                    x: { beginAtZero: true },
+                    y: { ticks: { maxRotation: 0, minRotation: 0 } }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+        @endif
     </script>
     @endif
 
@@ -81,4 +123,5 @@
         });
     </script>
     @endif
+    
 </x-app-layout>

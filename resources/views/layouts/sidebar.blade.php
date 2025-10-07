@@ -49,17 +49,20 @@
                 </li>
             @endif
 
+            @if(in_array(auth()->user()->role, ['admin_barang', 'super_admin']))
+                <li class="mb-2">
+                    <a href="{{ route('transactions.index') }}" class="menu-link flex items-center p-2 rounded font-semibold hover:bg-blue-600">
+                        <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                        <span>Riwayat Transaksi</span>
+                    </a>
+                </li>
+            @endif
+
             @if(auth()->user()->role == 'super_admin')
                 <li class="mb-2">
                     <a href="{{ route('users.index') }}" class="menu-link flex items-center p-2 rounded font-semibold hover:bg-blue-600">
                         <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197..."></path></svg>
                         <span>Manajemen User</span>
-                    </a>
-                </li>
-                <li class="mb-2">
-                    <a href="{{ route('transactions.index') }}" class="menu-link flex items-center p-2 rounded font-semibold hover:bg-blue-600">
-                        <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-                        <span>Riwayat Transaksi</span>
                     </a>
                 </li>
             @endif

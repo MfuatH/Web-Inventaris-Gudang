@@ -39,14 +39,14 @@ Route::middleware(['auth'])->group(function () {
         // Route untuk menambah stok ditambahkan di sini
         Route::patch('/items/{item}/add-stock', [ItemController::class, 'addStock'])->name('items.addStock');
         Route::put('/requests/{request}/approve', [RequestController::class, 'approve'])->name('requests.approve');
+        
+        // Route untuk Riwayat Transaksi - bisa diakses admin_barang dan super_admin
+        Route::resource('transactions', TransactionController::class)->only(['index']);
+        Route::get('/transactions/export', [TransactionController::class, 'export'])->name('transactions.export');
     });
 
     // Grup khusus Super Admin
     Route::middleware(['role:super_admin'])->group(function () {
         Route::resource('users', UserController::class);
-        Route::resource('transactions', TransactionController::class)->only(['index']);
-        
-        // Route untuk Export Excel
-        Route::get('/transactions/export', [TransactionController::class, 'export'])->name('transactions.export');
     });
 });

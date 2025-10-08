@@ -1,6 +1,6 @@
 <div class="fixed top-0 left-0 w-64 h-full bg-gradient-to-r from-blue-500 to-cyan-400 text-white p-4">
     
-    <a href="{{ route('dashboard') }}" class="inline-block mb-2">
+    <a href="https://dpuair.jatimprov.go.id/" target="_blank" rel="noopener noreferrer" class="inline-block mb-2">
         <img src="{{ asset('images/logo.png') }}" alt="Logo Aplikasi" class="h-16 w-auto">
     </a>
 

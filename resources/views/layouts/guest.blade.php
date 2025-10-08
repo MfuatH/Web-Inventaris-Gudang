@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
-    <link rel="icon" href="images/logo.png" type="image/x-icon"/>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        
         <title>INVPUSDA</title>
+        <link rel="icon" href="{{ asset('images/logo.png') }}" type="image/png"/>
+
         <link rel="stylesheet" href="{{ mix('css/app.css') }}">
         <script src="{{ mix('js/app.js') }}" defer></script>
     </head>
     <body class="antialiased" style="background-image: url('{{ asset('images/background.jpeg') }}'); background-size: cover; background-position: center;">
         <div class="font-sans text-gray-900">
-            <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0">
+            <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm-pt-0">
                 <div>
-                    <a href="/">
+                    <a href="https://dpuair.jatimprov.go.id/" target="_blank" rel="noopener noreferrer">
                         <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-auto h-20 mb-4">
                     </a>
                 </div>

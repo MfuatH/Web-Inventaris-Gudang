@@ -19,6 +19,9 @@ Route::redirect('/', '/login');
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('/dashboard/search', [DashboardController::class, 'search'])
+    ->middleware(['auth', 'verified'])->name('dashboard.search');
+
 require __DIR__.'/auth.php';
 
 // Grup untuk semua user yang sudah login

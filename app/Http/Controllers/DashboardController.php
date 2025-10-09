@@ -11,9 +11,10 @@ use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
+        $search = $request->get('search');
 
         // Data untuk Super Admin dan Admin Barang
         if (in_array($user->role, ['super_admin', 'admin_barang'])) {
@@ -22,8 +23,12 @@ class DashboardController extends Controller
             $transactionsIn = Transaction::where('tipe', 'masuk')->count();
             $transactionsOut = Transaction::where('tipe', 'keluar')->count();
 
-            // Data untuk grafik stock barang
-            $stockItems = Item::orderBy('nama_barang')->get();
+            // Data untuk grafik stock barang (dibatasi 15 item)
+            $stockQuery = Item::orderBy('nama_barang');
+            if ($search) {
+                $stockQuery->where('nama_barang', 'like', '%' . $search . '%');
+            }
+            $stockItems = $stockQuery->limit(15)->get();
             $stockChartData = [
                 'labels' => $stockItems->pluck('nama_barang'),
                 'data' => $stockItems->pluck('jumlah'),
@@ -35,7 +40,7 @@ class DashboardController extends Controller
             ];
 
             // Data khusus Super Admin
-            $viewData = compact('totalItems', 'pendingRequests', 'chartData', 'stockChartData');
+            $viewData = compact('totalItems', 'pendingRequests', 'chartData', 'stockChartData', 'search');
             if ($user->role === 'super_admin') {
                 $viewData['totalUsers'] = User::count();
             }
@@ -47,14 +52,56 @@ class DashboardController extends Controller
         if ($user->role === 'user') {
             $totalItems = Item::count();
             $pendingRequests = ItemRequest::where('user_id', $user->id)->where('status', 'pending')->count();
-            $availableItems = Item::where('jumlah', '>', 0)->orderBy('nama_barang')->get();
+            $availableQuery = Item::where('jumlah', '>', 0)->orderBy('nama_barang');
+            if ($search) {
+                $availableQuery->where('nama_barang', 'like', '%' . $search . '%');
+            }
+            $availableItems = $availableQuery->limit(15)->get();
             
             $chartDataUser = [
                 'labels' => $availableItems->pluck('nama_barang'),
                 'data' => $availableItems->pluck('jumlah'),
             ];
 
-            return view('dashboard', compact('totalItems', 'pendingRequests', 'chartDataUser'));
+            return view('dashboard', compact('totalItems', 'pendingRequests', 'chartDataUser', 'search'));
         }
+    }
+
+    public function search(Request $request)
+    {
+        $user = Auth::user();
+        $search = $request->get('search');
+
+        if (in_array($user->role, ['super_admin', 'admin_barang'])) {
+            $stockQuery = Item::orderBy('nama_barang');
+            // Only apply search filter if search term is not empty
+            if (!empty($search) && trim($search) !== '') {
+                $stockQuery->where('nama_barang', 'like', '%' . trim($search) . '%');
+            }
+            // Always limit to 15 items
+            $stockItems = $stockQuery->limit(15)->get();
+            
+            return response()->json([
+                'labels' => $stockItems->pluck('nama_barang'),
+                'data' => $stockItems->pluck('jumlah'),
+            ]);
+        }
+
+        if ($user->role === 'user') {
+            $availableQuery = Item::where('jumlah', '>', 0)->orderBy('nama_barang');
+            // Only apply search filter if search term is not empty
+            if (!empty($search) && trim($search) !== '') {
+                $availableQuery->where('nama_barang', 'like', '%' . trim($search) . '%');
+            }
+            // Always limit to 15 items
+            $availableItems = $availableQuery->limit(15)->get();
+            
+            return response()->json([
+                'labels' => $availableItems->pluck('nama_barang'),
+                'data' => $availableItems->pluck('jumlah'),
+            ]);
+        }
+
+        return response()->json(['labels' => [], 'data' => []]);
     }
 }

@@ -38,9 +38,11 @@ Route::middleware(['auth'])->group(function () {
 
     // Grup untuk Super Admin & Admin Barang
     Route::middleware(['role:super_admin,admin_barang'])->group(function () {
-        Route::resource('items', ItemController::class);
+        Route::resource('items', ItemController::class)->except(['show']);
         // Route untuk menambah stok ditambahkan di sini
         Route::patch('/items/{item}/add-stock', [ItemController::class, 'addStock'])->name('items.addStock');
+        // Route untuk export barang
+        Route::get('/items/export', [ItemController::class, 'export'])->name('items.export');
         Route::put('/requests/{request}/approve', [RequestController::class, 'approve'])->name('requests.approve');
         
         // Route untuk Riwayat Transaksi - bisa diakses admin_barang dan super_admin

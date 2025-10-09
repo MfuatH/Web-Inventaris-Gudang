@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Item;
 use App\Models\Transaction;
+use App\Exports\ItemsExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ItemController extends Controller
 {
@@ -141,5 +143,14 @@ class ItemController extends Controller
         });
     
         return redirect()->route('items.index')->with('success', 'Stok barang berhasil ditambahkan.');
+    }
+
+    /**
+     * Export semua barang ke Excel.
+     */
+    public function export()
+    {
+        $fileName = 'Data_Barang_' . now()->format('Y-m-d_H-i-s') . '.xlsx';
+        return Excel::download(new ItemsExport, $fileName);
     }
 }

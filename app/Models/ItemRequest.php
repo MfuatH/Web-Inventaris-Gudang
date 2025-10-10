@@ -13,7 +13,7 @@ class ItemRequest extends Model
      * Baris ini memberitahu Laravel untuk menggunakan tabel 'requests'
      * @var string
      */
-    protected $table = 'requests'; // <-- INI BAGIAN PALING PENTING
+    protected $table = 'request_barang'; // menggunakan tabel baru
 
     /**
      * Kolom yang boleh diisi secara massal.
@@ -21,6 +21,10 @@ class ItemRequest extends Model
      */
     protected $fillable = [
         'user_id',
+        'bidang_id',
+        'nama_pemohon',
+        'nip',
+        'no_hp',
         'item_id',
         'jumlah_request',
         'status',
@@ -40,5 +44,10 @@ class ItemRequest extends Model
     public function item()
     {
         return $this->belongsTo(Item::class);
+    }
+
+    public function bidang()
+    {
+        return $this->belongsTo(Bidang::class);
     }
 }

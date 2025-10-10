@@ -15,7 +15,8 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('request_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('request_id')->nullable()
+                ->constrained('request_barang')->nullOnDelete();
             $table->foreignId('item_id')->constrained()->onDelete('cascade');
             $table->integer('jumlah');
             $table->enum('tipe', ['masuk', 'keluar']);

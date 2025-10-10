@@ -14,7 +14,12 @@ use App\Http\Controllers\ProfileController;
 |--------------------------------------------------------------------------
 */
 
-Route::redirect('/', '/login');
+use App\Http\Controllers\GuestController;
+
+Route::get('/', [GuestController::class, 'index'])->name('guest.dashboard');
+Route::get('/guest/stock', [GuestController::class, 'stock'])->name('guest.stock');
+Route::get('/guest/requests/create', [GuestController::class, 'createRequest'])->name('guest.requests.create');
+Route::post('/guest/requests', [GuestController::class, 'storeRequest'])->name('guest.requests.store');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])->name('dashboard');

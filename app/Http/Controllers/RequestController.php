@@ -21,8 +21,14 @@ class RequestController extends Controller
 
         // JIKA BUKAN SUPER ADMIN, FILTER BERDASARKAN BIDANG
         if ($user->role === 'admin_barang') {
-            $requestsQuery->whereHas('user', function ($query) use ($user) {
-                $query->where('bidang', $user->bidang);
+            // Filter berdasarkan bidang_id jika ada; request tamu harus memiliki bidang_id terisi
+            $requestsQuery->where(function ($q) use ($user) {
+                $q->whereHas('user', function ($query) use ($user) {
+                        $query->where('bidang', $user->bidang);
+                    })
+                  ->orWhereHas('bidang', function ($query) use ($user) {
+                        $query->where('nama', $user->bidang);
+                    });
             });
         }
 
@@ -96,7 +102,8 @@ class RequestController extends Controller
 
         // JIKA ADMIN BARANG, PASTIKAN BIDANGNYA SAMA DENGAN PEMBUAT REQUEST
         if ($admin->role === 'admin_barang') {
-            if ($admin->bidang !== $request->user->bidang) {
+            // Bila request dari tamu (tanpa user), lewati pengecekan bidang
+            if ($request->user && $admin->bidang !== $request->user->bidang) {
                 abort(403, 'ANDA TIDAK BERHAK MENYETUJUI REQUEST INI.');
             }
         }

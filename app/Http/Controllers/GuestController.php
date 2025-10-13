@@ -70,7 +70,7 @@ class GuestController extends Controller
             return back()->withErrors(['error' => $e->getMessage()])->withInput();
         }
 
-        return redirect()->route('welcome')->with('success', 'Permintaan berhasil dikirim.');
+        return redirect()->back()->with('success', 'Permintaan berhasil dikirim.');
     }
 }
 

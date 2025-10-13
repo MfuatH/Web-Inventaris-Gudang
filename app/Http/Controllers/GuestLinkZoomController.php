@@ -28,7 +28,7 @@ class GuestLinkZoomController extends Controller
 
         RequestLinkZoom::create($validated);
 
-        return redirect()->route('welcome')->with('success', 'Permintaan Link Zoom terkirim.');
+        return redirect()->back()->with('success', 'Permintaan Link Zoom telah berhasil dikirim!');
     }
 }
 

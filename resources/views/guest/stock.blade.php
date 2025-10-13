@@ -9,7 +9,7 @@
 <body class="bg-gray-100 min-h-screen">
     <div class="max-w-4xl mx-auto py-12 px-4">
         <div class="mb-6">
-            <a href="{{ route('guest.dashboard') }}" class="text-blue-600 hover:underline">&larr; Kembali</a>
+            <a href="{{ route('welcome') }}" class="text-blue-600 hover:underline">&larr; Kembali</a>
         </div>
         <div class="bg-white p-6 rounded shadow">
             <h1 class="text-xl font-bold mb-4">Stok Barang Tersedia</h1>

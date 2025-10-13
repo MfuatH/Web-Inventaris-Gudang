@@ -7,6 +7,7 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\GuestLinkZoomController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,10 +17,12 @@ use App\Http\Controllers\ProfileController;
 
 use App\Http\Controllers\GuestController;
 
-Route::get('/', [GuestController::class, 'index'])->name('guest.dashboard');
+Route::view('/', 'welcome')->name('welcome');
 Route::get('/guest/stock', [GuestController::class, 'stock'])->name('guest.stock');
 Route::get('/guest/requests/create', [GuestController::class, 'createRequest'])->name('guest.requests.create');
 Route::post('/guest/requests', [GuestController::class, 'storeRequest'])->name('guest.requests.store');
+Route::get('/guest/linkzoom/create', [GuestLinkZoomController::class, 'create'])->name('guest.linkzoom.create');
+Route::post('/guest/linkzoom', [GuestLinkZoomController::class, 'store'])->name('guest.linkzoom.store');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])->name('dashboard');

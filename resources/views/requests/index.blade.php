@@ -23,7 +23,7 @@
                         <tbody class="text-gray-700">
                             @forelse ($requests as $request)
                             <tr>
-                                <td class="py-3 px-4">{{ $request->user->name }}</td>
+                                <td class="py-3 px-4">{{ optional($request->user)->name ?? $request->nama_pemohon }}</td>
                                 <td class="py-3 px-4">{{ $request->item->nama_barang }}</td>
                                 <td class="py-3 px-4">{{ $request->jumlah_request }}</td>
                                 <td class="py-3 px-4">{{ $request->created_at->format('d-m-Y') }}</td>

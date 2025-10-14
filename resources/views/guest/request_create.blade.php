@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <link rel="icon" href="{{ asset('images/logo.png') }}" type="image/x-icon"/>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Buat Request Barang</title>
+    <title>Request Barang</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">

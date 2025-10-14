@@ -29,6 +29,7 @@ class UserController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
+            'no_hp' => ['nullable', 'string', 'max:20'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role' => ['required', 'in:admin_barang,user'], // Super Admin dihapus dari validasi
             'bidang_id' => ['required', 'exists:bidang,id'],
@@ -39,6 +40,7 @@ class UserController extends Controller
         User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'no_hp' => $request->no_hp,
             'password' => Hash::make($request->password),
             'role' => $request->role,
             'bidang' => $bidang?->nama,
@@ -65,6 +67,7 @@ class UserController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id],
             'role' => ['required', 'in:admin_barang,user'],
             'bidang_id' => ['required', 'exists:bidang,id'],
+            'no_hp' => ['nullable', 'string', 'max:20'],
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
         ]);
 
@@ -75,6 +78,7 @@ class UserController extends Controller
             'email' => $request->email,
             'role' => $request->role,
             'bidang' => $bidang?->nama,
+            'no_hp' => $request->no_hp,
         ];
 
         if ($request->filled('password')) {

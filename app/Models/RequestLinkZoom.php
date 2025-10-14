@@ -20,7 +20,26 @@ class RequestLinkZoom extends Model
         'jadwal_mulai',
         'jadwal_selesai',
         'keterangan',
+        'status',
     ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'jadwal_mulai' => 'datetime',
+        'jadwal_selesai' => 'datetime',
+    ];
+
+    /**
+     * Get the bidang that owns the request.
+     */
+    public function bidang()
+    {
+        return $this->belongsTo(Bidang::class);
+    }
 }
 
 

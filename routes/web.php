@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\GuestLinkZoomController;
+use App\Http\Controllers\ZoomController;
 
 /*
 |--------------------------------------------------------------------------
@@ -52,6 +53,13 @@ Route::middleware(['auth'])->group(function () {
         // Route untuk export barang
         Route::get('/items/export', [ItemController::class, 'export'])->name('items.export');
         Route::put('/requests/{request}/approve', [RequestController::class, 'approve'])->name('requests.approve');
+        
+        // Routes untuk Zoom
+        Route::get('/zoom/approval', [ZoomController::class, 'approval'])->name('zoom.approval');
+        Route::put('/zoom/{request}/add-link', [ZoomController::class, 'addLink'])->name('zoom.add_link');
+        Route::put('/zoom/{request}/approve', [ZoomController::class, 'approve'])->name('zoom.approve');
+        Route::get('/zoom/master-pesan', [ZoomController::class, 'masterPesan'])->name('zoom.master_pesan');
+        Route::post('/zoom/master-pesan', [ZoomController::class, 'storeMasterPesan'])->name('zoom.master_pesan.store');
         
         // Route untuk Riwayat Transaksi - bisa diakses admin_barang dan super_admin
         Route::resource('transactions', TransactionController::class)->only(['index']);

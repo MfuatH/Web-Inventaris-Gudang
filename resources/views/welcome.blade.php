@@ -59,7 +59,7 @@
 
             <div class="mb-8">
                 <a href="https://dpuair.jatimprov.go.id/" target="_blank" rel="noopener noreferrer">
-                    <img src="{{ asset('images/logo.png') }}" alt="Logo PUSDA" class="w-auto h-20 mx-auto ">
+                    <img src="{{ asset('images/logo.png') }}" alt="Logo PUSDA" style="width: 420px; height: auto;">
                 </a>
                 <h1 class="font-natural text-white text-3xl tracking-wide mt-20">
                     Selamat Datang

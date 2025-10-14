@@ -44,8 +44,23 @@
                 <li class="mb-2">
                     <a href="{{ route('requests.index') }}" class="menu-link flex items-center p-2 rounded font-semibold hover:bg-blue-600">
                         <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <span>Approval Request</span>
+                        <span>Approval Barang</span>
                     </a>
+                </li>
+                <li class="mb-2">
+                    <div class="dropdown">
+                        <button class="menu-link flex items-center justify-between w-full p-2 rounded font-semibold hover:bg-blue-600" onclick="toggleDropdown('zoom-dropdown')">
+                            <div class="flex items-center">
+                                <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                <span>Approval Zoom</span>
+                            </div>
+                            <svg class="w-4 h-4 transition-transform" id="zoom-dropdown-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div id="zoom-dropdown" class="dropdown-content hidden ml-4 mt-1">
+                            <a href="{{ route('zoom.approval') }}" class="block py-2 px-3 text-sm hover:bg-blue-600 rounded">Approval</a>
+                            <a href="{{ route('zoom.master_pesan') }}" class="block py-2 px-3 text-sm hover:bg-blue-600 rounded">Master Pesan</a>
+                        </div>
+                    </div>
                 </li>
             @endif
 
@@ -82,3 +97,18 @@
         </ul>
     </nav>
 </div>
+
+<script>
+function toggleDropdown(dropdownId) {
+    const dropdown = document.getElementById(dropdownId);
+    const icon = document.getElementById(dropdownId + '-icon');
+    
+    if (dropdown.classList.contains('hidden')) {
+        dropdown.classList.remove('hidden');
+        icon.style.transform = 'rotate(180deg)';
+    } else {
+        dropdown.classList.add('hidden');
+        icon.style.transform = 'rotate(0deg)';
+    }
+}
+</script>

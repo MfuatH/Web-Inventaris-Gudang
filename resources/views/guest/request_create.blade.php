@@ -46,7 +46,7 @@
         </div>
     @endif
 
-    <div class="bg-blue-300 rounded-2xl shadow-2xl overflow-hidden max-w-6xl w-full">
+    <div style="backdrop-filter: blur(12px);" class="bg-blur rounded-2xl shadow-2xl overflow-hidden max-w-6xl w-full">
         
         <div class="p-6 relative min-h-[600px]">
 

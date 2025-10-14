@@ -13,6 +13,8 @@
                         <thead class="bg-gray-800 text-white">
                             <tr>
                                 <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Peminta</th>
+                                <th class="text-left py-3 px-4 uppercase font-semibold text-sm">NIP</th>
+                                <th class="text-left py-3 px-4 uppercase font-semibold text-sm">No HP</th>
                                 <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Nama Barang</th>
                                 <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Jumlah</th>
                                 <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Tanggal</th>
@@ -24,6 +26,8 @@
                             @forelse ($requests as $request)
                             <tr>
                                 <td class="py-3 px-4">{{ optional($request->user)->name ?? $request->nama_pemohon }}</td>
+                                <td class="py-3 px-4">{{ $request->nip ?? '-' }}</td>
+                                <td class="py-3 px-4">{{ $request->no_hp ?? '-' }}</td>
                                 <td class="py-3 px-4">{{ $request->item->nama_barang }}</td>
                                 <td class="py-3 px-4">{{ $request->jumlah_request }}</td>
                                 <td class="py-3 px-4">{{ $request->created_at->format('d-m-Y') }}</td>
@@ -42,7 +46,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="6" class="text-center py-4">Tidak ada permintaan barang yang masuk.</td>
+                                <td colspan="8" class="text-center py-4">Tidak ada permintaan barang yang masuk.</td>
                             </tr>
                             @endforelse
                         </tbody>

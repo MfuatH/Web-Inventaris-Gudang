@@ -45,14 +45,12 @@
                             </div>
 
                             <div>
-                                <x-input-label for="bidang" :value="__('Bidang')" />
-                                <select name="bidang" id="bidang" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                                <x-input-label for="bidang_id" :value="__('Bidang')" />
+                                <select name="bidang_id" id="bidang_id" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
                                     <option value="">-- Pilih Bidang --</option>
-                                    <option value="sekretariat">Sekretariat</option>
-                                    <option value="psda">PSDA</option>
-                                    <option value="irigasi">Irigasi</option>
-                                    <option value="swp">SWP</option>
-                                    <option value="binfat">BINFAT</option>
+                                    @foreach($bidang as $b)
+                                        <option value="{{ $b->id }}">{{ $b->nama }}</option>
+                                    @endforeach
                                 </select>
                             </div>
 

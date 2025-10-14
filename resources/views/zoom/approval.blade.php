@@ -35,7 +35,7 @@
                                 <td class="py-3 px-4">{{ $request->nama_pemohon }}</td>
                                 <td class="py-3 px-4">{{ $request->nip ?? '-' }}</td>
                                 <td class="py-3 px-4">{{ $request->no_hp }}</td>
-                                <td class="py-3 px-4">{{ $request->bidang->nama ?? '-' }}</td>
+                                <td class="py-3 px-4">{{ optional($request->bidang)->nama ?? '-' }}</td>
                                 <td class="py-3 px-4">{{ $request->jadwal_mulai->format('d-m-Y H:i') }}</td>
                                 <td class="py-3 px-4">{{ $request->jadwal_selesai ? $request->jadwal_selesai->format('d-m-Y H:i') : '-' }}</td>
                                 <td class="py-3 px-4">

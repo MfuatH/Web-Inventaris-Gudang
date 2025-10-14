@@ -36,7 +36,8 @@ class ZoomController extends Controller
 
         // Validasi hak akses untuk admin_barang
         if ($admin->role === 'admin_barang') {
-            if ($admin->bidang !== $zoomRequest->bidang->nama) {
+            $reqBidangNama = optional($zoomRequest->bidang)->nama;
+            if ($reqBidangNama === null || $admin->bidang !== $reqBidangNama) {
                 abort(403, 'ANDA TIDAK BERHAK MENYETUJUI REQUEST INI.');
             }
         }
@@ -61,7 +62,8 @@ class ZoomController extends Controller
 
         // Validasi hak akses untuk admin_barang
         if ($admin->role === 'admin_barang') {
-            if ($admin->bidang !== $request->bidang->nama) {
+            $reqBidangNama = optional($request->bidang)->nama;
+            if ($reqBidangNama === null || $admin->bidang !== $reqBidangNama) {
                 abort(403, 'ANDA TIDAK BERHAK MENYETUJUI REQUEST INI.');
             }
         }

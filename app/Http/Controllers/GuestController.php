@@ -7,6 +7,8 @@ use App\Models\ItemRequest;
 use App\Models\Bidang;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\User;
+use App\Services\WhatsAppService;
 
 class GuestController extends Controller
 {
@@ -33,7 +35,7 @@ class GuestController extends Controller
         return view('guest.request_create', compact('items', 'bidang'));
     }
 
-    public function storeRequest(Request $request)
+    public function storeRequest(Request $request, WhatsAppService $wa)
     {
         $validated = $request->validate([
             'nama_pemohon' => 'required|string|max:255',
@@ -46,7 +48,7 @@ class GuestController extends Controller
         ]);
 
         try {
-            DB::transaction(function () use ($validated) {
+            DB::transaction(function () use ($validated, $wa) {
                 foreach ($validated['items'] as $reqItem) {
                     $item = Item::findOrFail($reqItem['item_id']);
 
@@ -54,7 +56,7 @@ class GuestController extends Controller
                         throw new \Exception('Stok untuk barang "' . $item->nama_barang . '" tidak mencukupi.');
                     }
 
-                    ItemRequest::create([
+                    $created = ItemRequest::create([
                         'user_id' => null,
                         'bidang_id' => $validated['bidang_id'],
                         'nama_pemohon' => $validated['nama_pemohon'],
@@ -64,6 +66,22 @@ class GuestController extends Controller
                         'jumlah_request' => $reqItem['jumlah_request'],
                         'status' => 'pending',
                     ]);
+
+                    // Kirim WA ke admin_barang dengan bidang yang sesuai (berdasarkan users.bidang dan no_hp)
+                    $bidang = Bidang::find($validated['bidang_id']);
+                    if ($bidang) {
+                        $adminTargets = User::where('role', 'admin_barang')
+                            ->where('bidang', $bidang->nama)
+                            ->whereNotNull('no_hp')
+                            ->pluck('no_hp');
+
+                        if ($adminTargets->count() > 0) {
+                            $message = "[Request Barang]\nNama: {$validated['nama_pemohon']}\nBidang: {$bidang->nama}\nBarang: {$item->nama_barang}\nJumlah: {$reqItem['jumlah_request']}\nKontak: {$validated['no_hp']}";
+                            foreach ($adminTargets as $phone) {
+                                $wa->sendMessage($phone, $message);
+                            }
+                        }
+                    }
                 }
             });
         } catch (\Exception $e) {

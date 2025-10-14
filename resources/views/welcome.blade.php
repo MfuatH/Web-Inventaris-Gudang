@@ -51,10 +51,10 @@
                     class="w-12 h-12 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white shadow-md hover:bg-white/40 transition">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-                </svg>
+                    </svg>
             </button>
-        </div>
-        
+                </div>
+
         <div class="min-h-screen flex flex-col justify-center items-center text-center p-6 bg-black/30">
 
             <div class="mb-8">
@@ -64,8 +64,8 @@
                 <h1 class="font-natural text-white text-3xl tracking-wide mt-20">
                     Selamat Datang
                 </h1>
-            </div>
-        
+                        </div>
+
             <div class="w-full max-w-2xl grid grid-cols-1 md:grid-cols-2 gap-6 ">
                 
                 <a href="{{route('guest.requests.create')}}" class="block p-6 bg-gray-800/20 backdrop-blur-xl shadow-lg rounded-2xl border border-white/20 text-white font-semibold hover:bg-gray-400/40 transition duration-300">
@@ -77,7 +77,7 @@
                     <svg class="w-12 h-12 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
                     <span>Permintaan Link Zoom</span>
                 </a>
-            </div>
+                    </div>
 
         </div>
     </body>

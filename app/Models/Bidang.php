@@ -11,7 +11,8 @@ class Bidang extends Model
 
     protected $table = 'bidang';
 
-    protected $fillable = ['nama'];
+    protected $fillable = [
+    'nama',
+    'pesan_template'
+    ];
 }
-
-

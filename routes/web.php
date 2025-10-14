@@ -56,8 +56,10 @@ Route::middleware(['auth'])->group(function () {
         
         // Routes untuk Zoom
         Route::get('/zoom/approval', [ZoomController::class, 'approval'])->name('zoom.approval');
-        Route::put('/zoom/{request}/add-link', [ZoomController::class, 'addLink'])->name('zoom.add_link');
-        Route::put('/zoom/{request}/approve', [ZoomController::class, 'approve'])->name('zoom.approve');
+        // Route::put('/zoom/{request}/add-link', [ZoomController::class, 'addLink'])->name('zoom.add_link');
+        // Route::put('/zoom/{request}/approve', [ZoomController::class, 'approve'])->name('zoom.approve');
+        Route::put('/zoom/{zoomRequest}/add-link', [ZoomController::class, 'addLink'])->name('zoom.addLink');
+Route::put('/zoom/{zoomRequest}/approve', [ZoomController::class, 'approve'])->name('zoom.approve');
         Route::get('/zoom/master-pesan', [ZoomController::class, 'masterPesan'])->name('zoom.master_pesan');
         Route::post('/zoom/master-pesan', [ZoomController::class, 'storeMasterPesan'])->name('zoom.master_pesan.store');
         

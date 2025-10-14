@@ -12,7 +12,7 @@
 
     <style>
         body {
-            background-image: url('{{ asset('images/air.png') }}');
+            background-image: url('{{ asset('images/air.jpeg') }}');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;

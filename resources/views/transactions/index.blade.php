@@ -25,7 +25,7 @@
                                     <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Nama Barang</th>
                                     <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Jumlah</th>
                                     <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Tipe</th>
-                                    <th class="text-left py-3 px-4 uppercase font-semibold text-sm">User Perequest</th>
+                                    <!-- <th class="text-left py-3 px-4 uppercase font-semibold text-sm">User Perequest</th> -->
                                 </tr>
                             </thead>
                             <tbody class="text-gray-700 dark:text-gray-300">
@@ -42,9 +42,9 @@
                                             <span class="bg-red-200 text-red-800 py-1 px-3 rounded-full text-xs">Keluar</span>
                                         @endif
                                     </td>
-                                    <td class="py-3 px-4">
+                                    <!-- <td class="py-3 px-4">
                                         {{ $transaction->request->user->name ?? '-' }}
-                                    </td>
+                                    </td> -->
                                 </tr>
                                 @empty
                                 <tr>

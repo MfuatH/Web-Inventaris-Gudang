@@ -50,4 +50,5 @@ class User extends Authenticatable
         // belongsTo(RelatedModel, foreign_key, owner_key)
         return $this->belongsTo(Bidang::class, 'bidang', 'nama');
     }
+    
 }

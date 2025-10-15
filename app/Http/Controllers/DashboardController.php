@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Item;
 use App\Models\ItemRequest;
+use App\Models\RequestLinkZoom;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -20,8 +21,11 @@ class DashboardController extends Controller
         if (in_array($user->role, ['super_admin', 'admin_barang'])) {
             $totalItems = Item::count();
             $pendingRequests = ItemRequest::where('status', 'pending')->count();
-            $transactionsIn = Transaction::where('tipe', 'masuk')->count();
-            $transactionsOut = Transaction::where('tipe', 'keluar')->count();
+            $pendingZoomRequests = RequestLinkZoom::where('status', 'pending')->count();
+            
+            // Hitung total barang masuk dan keluar
+            $totalBarangMasuk = Transaction::where('tipe', 'masuk')->sum('jumlah');
+            $totalBarangKeluar = Transaction::where('tipe', 'keluar')->sum('jumlah');
 
             // Data untuk grafik stock barang (dibatasi 15 item)
             $stockQuery = Item::orderBy('nama_barang');
@@ -34,13 +38,8 @@ class DashboardController extends Controller
                 'data' => $stockItems->pluck('jumlah'),
             ];
 
-            $chartData = [
-                'in' => $transactionsIn,
-                'out' => $transactionsOut,
-            ];
-
             // Data khusus Super Admin
-            $viewData = compact('totalItems', 'pendingRequests', 'chartData', 'stockChartData', 'search');
+            $viewData = compact('totalItems', 'pendingRequests', 'pendingZoomRequests', 'totalBarangMasuk', 'totalBarangKeluar', 'stockChartData', 'search');
             if ($user->role === 'super_admin') {
                 $viewData['totalUsers'] = User::count();
             }

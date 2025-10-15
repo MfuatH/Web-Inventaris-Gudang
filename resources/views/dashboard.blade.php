@@ -7,7 +7,7 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-6">
                 @if(auth()->user()->role == 'super_admin')
                 <div class="bg-white p-6 rounded-lg shadow-sm">
                     <h3 class="text-lg font-semibold">Total Pengguna</h3>
@@ -19,19 +19,25 @@
                     <p class="text-3xl font-bold">{{ $totalItems }}</p>
                 </div>
                 <div class="bg-white p-6 rounded-lg shadow-sm">
-                    <h3 class="text-lg font-semibold">Request Pending</h3>
+                    <h3 class="text-lg font-semibold">Request Barang Pending</h3>
                     <p class="text-3xl font-bold">{{ $pendingRequests }}</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h3 class="text-lg font-semibold">Request Zoom Pending</h3>
+                    <p class="text-3xl font-bold">{{ $pendingZoomRequests }}</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h3 class="text-lg font-semibold">Total Barang Masuk</h3>
+                    <p class="text-3xl font-bold text-green-600">{{ $totalBarangMasuk ?? 0 }}</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h3 class="text-lg font-semibold">Total Barang Keluar</h3>
+                    <p class="text-3xl font-bold text-red-600">{{ $totalBarangKeluar ?? 0 }}</p>
                 </div>
             </div>
             
             <div class="grid grid-cols-1 gap-6">
                 @if(in_array(auth()->user()->role, ['super_admin', 'admin_barang']))
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div class="p-6 bg-white border-b border-gray-200">
-                            <h3 class="text-lg font-semibold mb-4">Grafik Transaksi Barang</h3>
-                            <canvas id="transactionChart"></canvas>
-                        </div>
-                    </div>
                     
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div class="p-6 bg-white border-b border-gray-200">
@@ -95,26 +101,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     @if(in_array(auth()->user()->role, ['super_admin', 'admin_barang']))
-        @if(isset($chartData))
-        <script>
-            // Grafik Transaksi (Bar Chart)
-            const ctx = document.getElementById('transactionChart').getContext('2d');
-            const chartData = @json($chartData);
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Barang Masuk', 'Barang Keluar'],
-                    datasets: [{
-                        label: '# of Transactions', data: [chartData.in, chartData.out],
-                        backgroundColor: ['rgba(75, 192, 192, 0.2)', 'rgba(255, 99, 132, 0.2)'],
-                        borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'],
-                        borderWidth: 1
-                    }]
-                },
-                options: { scales: { y: { beginAtZero: true } } }
-            });
-        </script>
-        @endif
 
         @if(isset($stockChartData))
         <script>

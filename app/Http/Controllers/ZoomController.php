@@ -8,6 +8,7 @@ use App\Services\WhatsAppService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class ZoomController extends Controller
 {
@@ -142,11 +143,32 @@ class ZoomController extends Controller
      */
     public function storeMasterPesan(Request $request)
     {
+        // 1. Ambil data pengguna yang sedang login
+        $user = Auth::user();
+
+        // 2. Cek peran pengguna. Jika BUKAN superadmin, lakukan modifikasi.
+        if ($user->role !== 'super_admin') {
+            // Pastikan admin tersebut memiliki relasi bidang yang valid
+            if ($user->getBidang) {
+                // Suntikkan (merge) ID bidang milik admin ke dalam request.
+                // Ini akan menimpa input apa pun dari form.
+                $request->merge(['bidang_id' => $user->getBidang->id]);
+            } else {
+                // Pengaman jika admin tidak punya bidang, kembalikan dengan error.
+                return back()->withErrors(['error' => 'Profil admin Anda tidak terhubung ke bidang manapun.']);
+            }
+        }
+
+        // 3. Validasi data. Ini sekarang berfungsi untuk kedua peran.
+        // Superadmin: memvalidasi input dari dropdown.
+        // Admin Biasa: memvalidasi ID bidang yang baru saja kita suntikkan.
         $validated = $request->validate([
             'bidang_id' => 'required|exists:bidang,id',
             'pesan' => 'required|string|max:2000',
         ]);
 
+        // 4. Cari dan update bidang.
+        // Logika ini tidak perlu diubah karena sudah menerima bidang_id yang benar.
         $bidang = Bidang::findOrFail($validated['bidang_id']);
 
         $bidang->update([

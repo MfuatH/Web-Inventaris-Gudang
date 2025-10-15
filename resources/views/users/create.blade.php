@@ -43,7 +43,6 @@
                             <div>
                                 <x-input-label for="role" :value="__('Role')" />
                                 <select name="role" id="role" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
-                                    <option value="user">User</option>
                                     <option value="admin_barang">Admin Barang</option>
                                     {{-- Opsi Super Admin dihapus --}}
                                 </select>

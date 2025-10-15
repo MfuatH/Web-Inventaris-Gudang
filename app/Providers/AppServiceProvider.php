@@ -33,32 +33,37 @@ class AppServiceProvider extends ServiceProvider
                 $pendingBarangCount = 0;
                 $pendingZoomCount = 0;
 
-                // Hitung hanya jika user adalah admin
                 if (in_array($user->role, ['admin_barang', 'super_admin'])) {
+                    
                     // --- LOGIKA UNTUK APPROVAL BARANG ---
                     $barangQuery = ItemRequest::where('status', 'pending');
+
+                    // Filter hanya diterapkan untuk admin_barang, super_admin melihat semua
                     if ($user->role === 'admin_barang') {
-                        // Admin barang hanya melihat request dari bidangnya
-                        $barangQuery->whereHas('user', function ($q) use ($user) {
-                            $q->where('bidang', $user->bidang);
-                        })->orWhereHas('bidang', function ($q) use ($user) {
-                            // Menangani request dari tamu untuk bidang terkait
-                             $q->where('nama', $user->bidang);
+                        // KUNCI PERBAIKAN: Mengelompokkan kondisi WHERE
+                        $barangQuery->where(function ($query) use ($user) {
+                            // Kondisi 1: Request dari user terdaftar di bidang yang sama
+                            $query->whereHas('user', function ($q_user) use ($user) {
+                                $q_user->where('bidang', $user->bidang);
+                            });
+                            // ATAU
+                            // Kondisi 2: Request dari tamu untuk bidang yang sama
+                            $query->orWhereHas('bidang', function ($q_bidang) use ($user) {
+                                $q_bidang->where('nama', $user->bidang);
+                            });
                         });
                     }
                     $pendingBarangCount = $barangQuery->count();
 
 
-                    // --- LOGIKA UNTUK APPROVAL ZOOM ---
+                    // --- LOGIKA UNTUK APPROVAL ZOOM (Tidak Diubah, sudah benar) ---
                     $zoomQuery = RequestLinkzoom::where('status', 'pending');
                     if ($user->role === 'admin_barang' && $user->getBidang) {
-                        // Admin barang hanya melihat request zoom dari bidangnya
                         $zoomQuery->where('bidang_id', $user->getBidang->id);
                     }
                     $pendingZoomCount = $zoomQuery->count();
                 }
 
-                // Bagikan variabel ke semua view
                 $view->with('pendingBarangCount', $pendingBarangCount);
                 $view->with('pendingZoomCount', $pendingZoomCount);
             }

@@ -12,7 +12,7 @@
                     <div class="mb-4 flex justify-between items-center">
                         <div class="flex gap-4">
                             <a href="{{ route('items.create') }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                                + Tambah Barang
+                                + Tambah Barang Baru
                             </a>
                             
                             <a href="{{ route('items.export') }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded flex items-center">
@@ -43,11 +43,22 @@
                             </thead>
                             <tbody class="text-gray-700">
                                 @forelse ($items as $item)
-                                <tr class="border-b hover:bg-gray-50">
+                                    @php
+                                        $isLowStock = $item->jumlah < 5;
+                                        $isCriticalStock = $item->jumlah < 2;
+                                    @endphp
+                                <tr class="border-b hover:bg-gray-50 {{ $isCriticalStock ? 'bg-red-50' : ($isLowStock ? 'bg-yellow-50' : '') }}">
                                     <td class="py-3 px-4">{{ $item->kode_barang }}</td>
                                     <td class="py-3 px-4">{{ $item->nama_barang }}</td>
                                     <td class="py-3 px-4">{{ $item->satuan }}</td>
-                                    <td class="py-3 px-4">{{ $item->jumlah }}</td>
+                                    <td class="py-3 px-4 {{ $isCriticalStock ? 'text-red-600 font-bold' : ($isLowStock ? 'text-yellow-600 font-semibold' : 'text-gray-900') }}">
+                                        {{ $item->jumlah }}
+                                        @if($isCriticalStock)
+                                            <span class="ml-1 text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full">KRITIS</span>
+                                        @elseif($isLowStock)
+                                            <span class="ml-1 text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">RENDAH</span>
+                                        @endif
+                                    </td>
                                     <td class="py-3 px-4">{{ $item->lokasi }}</td>
                                     <td class="py-3 px-4">{{ $item->keterangan ?? '-' }}</td>
                                     

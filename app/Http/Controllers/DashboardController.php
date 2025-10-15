@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Item;
 use App\Models\ItemRequest;
+use App\Models\RequestLinkZoom;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -20,27 +21,26 @@ class DashboardController extends Controller
         if (in_array($user->role, ['super_admin', 'admin_barang'])) {
             $totalItems = Item::count();
             $pendingRequests = ItemRequest::where('status', 'pending')->count();
-            $transactionsIn = Transaction::where('tipe', 'masuk')->count();
-            $transactionsOut = Transaction::where('tipe', 'keluar')->count();
+            $pendingZoomRequests = RequestLinkZoom::where('status', 'pending')->count();
+            
+            // Hitung total barang masuk dan keluar
+            $totalBarangMasuk = Transaction::where('tipe', 'masuk')->count();
+            $totalBarangKeluar = Transaction::where('tipe', 'keluar')->count(); // Hitung berapa kali transaksi keluar
 
-            // Data untuk grafik stock barang (dibatasi 15 item)
-            $stockQuery = Item::orderBy('nama_barang');
+            // Data untuk tabel stock barang menipis (stok < 10, dibatasi 10 item)
+            $stockQuery = Item::where('jumlah', '<', 10)->orderBy('jumlah', 'asc')->orderBy('nama_barang');
             if ($search) {
                 $stockQuery->where('nama_barang', 'like', '%' . $search . '%');
             }
-            $stockItems = $stockQuery->limit(15)->get();
+            $stockItems = $stockQuery->limit(10)->get();
             $stockChartData = [
                 'labels' => $stockItems->pluck('nama_barang'),
                 'data' => $stockItems->pluck('jumlah'),
-            ];
-
-            $chartData = [
-                'in' => $transactionsIn,
-                'out' => $transactionsOut,
+                'satuan' => $stockItems->pluck('satuan'),
             ];
 
             // Data khusus Super Admin
-            $viewData = compact('totalItems', 'pendingRequests', 'chartData', 'stockChartData', 'search');
+            $viewData = compact('totalItems', 'pendingRequests', 'pendingZoomRequests', 'totalBarangMasuk', 'totalBarangKeluar', 'stockChartData', 'search');
             if ($user->role === 'super_admin') {
                 $viewData['totalUsers'] = User::count();
             }
@@ -73,17 +73,18 @@ class DashboardController extends Controller
         $search = $request->get('search');
 
         if (in_array($user->role, ['super_admin', 'admin_barang'])) {
-            $stockQuery = Item::orderBy('nama_barang');
+            $stockQuery = Item::where('jumlah', '<', 10)->orderBy('jumlah', 'asc')->orderBy('nama_barang');
             // Only apply search filter if search term is not empty
             if (!empty($search) && trim($search) !== '') {
                 $stockQuery->where('nama_barang', 'like', '%' . trim($search) . '%');
             }
-            // Always limit to 15 items
-            $stockItems = $stockQuery->limit(15)->get();
+            // Always limit to 10 items
+            $stockItems = $stockQuery->limit(10)->get();
             
             return response()->json([
                 'labels' => $stockItems->pluck('nama_barang'),
                 'data' => $stockItems->pluck('jumlah'),
+                'satuan' => $stockItems->pluck('satuan'),
             ]);
         }
 

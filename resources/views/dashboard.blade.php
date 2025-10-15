@@ -7,7 +7,7 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-6">
                 @if(auth()->user()->role == 'super_admin')
                 <div class="bg-white p-6 rounded-lg shadow-sm">
                     <h3 class="text-lg font-semibold">Total Pengguna</h3>
@@ -19,23 +19,29 @@
                     <p class="text-3xl font-bold">{{ $totalItems }}</p>
                 </div>
                 <div class="bg-white p-6 rounded-lg shadow-sm">
-                    <h3 class="text-lg font-semibold">Request Pending</h3>
+                    <h3 class="text-lg font-semibold">Request Barang Pending</h3>
                     <p class="text-3xl font-bold">{{ $pendingRequests }}</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h3 class="text-lg font-semibold">Request Zoom Pending</h3>
+                    <p class="text-3xl font-bold">{{ $pendingZoomRequests }}</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h3 class="text-lg font-semibold">Total Transaksi Masuk</h3>
+                    <p class="text-3xl font-bold text-green-600">{{ $totalBarangMasuk ?? 0 }}</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h3 class="text-lg font-semibold">Jumlah Transaksi Keluar</h3>
+                    <p class="text-3xl font-bold text-red-600">{{ $totalBarangKeluar ?? 0 }}</p>
                 </div>
             </div>
             
             <div class="grid grid-cols-1 gap-6">
                 @if(in_array(auth()->user()->role, ['super_admin', 'admin_barang']))
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div class="p-6 bg-white border-b border-gray-200">
-                            <h3 class="text-lg font-semibold mb-4">Grafik Transaksi Barang</h3>
-                            <canvas id="transactionChart"></canvas>
-                        </div>
-                    </div>
                     
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div class="p-6 bg-white border-b border-gray-200">
-                            <h3 class="text-lg font-semibold mb-4">Grafik Stok Barang Saat Ini</h3>
+                            <h3 class="text-lg font-semibold mb-4">Tabel Stok Barang Menipis (Stok < 10)</h3>
                             
                             <!-- Search Bar -->
                             <div class="mb-4">
@@ -43,7 +49,7 @@
                                     <div class="flex-1 relative">
                                         <input type="text" 
                                                id="stockSearch" 
-                                               placeholder="Cari nama barang..." 
+                                               placeholder="Cari nama barang dengan stok menipis..." 
                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                         <div id="stockLoading" class="absolute right-3 top-1/2 transform -translate-y-1/2 hidden">
                                             <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
@@ -56,7 +62,43 @@
                                 </div>
                             </div>
                             
-                            <canvas id="stockChart"></canvas>
+                            <!-- Tabel Stok Barang -->
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Barang</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah Stok</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Satuan</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="stockTableBody" class="bg-white divide-y divide-gray-200">
+                                        @if(isset($stockChartData))
+                                            @foreach($stockChartData['labels'] as $index => $label)
+                                                @php
+                                                    $stok = $stockChartData['data'][$index];
+                                                    $isLowStock = $stok < 5;
+                                                    $isCriticalStock = $stok < 2;
+                                                @endphp
+                                                <tr class="{{ $isCriticalStock ? 'bg-red-50' : ($isLowStock ? 'bg-yellow-50' : '') }}">
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $index + 1 }}</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $label }}</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm {{ $isCriticalStock ? 'text-red-600 font-bold' : ($isLowStock ? 'text-yellow-600 font-semibold' : 'text-gray-900') }}">
+                                                        {{ $stok }}
+                                                        @if($isCriticalStock)
+                                                            <span class="ml-1 text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full">KRITIS</span>
+                                                        @elseif($isLowStock)
+                                                            <span class="ml-1 text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">RENDAH</span>
+                                                        @endif
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $stockChartData['satuan'][$index] ?? 'Unit' }}</td>
+                                                </tr>
+                                            @endforeach
+                                        @endif
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 
@@ -92,59 +134,16 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     @if(in_array(auth()->user()->role, ['super_admin', 'admin_barang']))
-        @if(isset($chartData))
-        <script>
-            // Grafik Transaksi (Bar Chart)
-            const ctx = document.getElementById('transactionChart').getContext('2d');
-            const chartData = @json($chartData);
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Barang Masuk', 'Barang Keluar'],
-                    datasets: [{
-                        label: '# of Transactions', data: [chartData.in, chartData.out],
-                        backgroundColor: ['rgba(75, 192, 192, 0.2)', 'rgba(255, 99, 132, 0.2)'],
-                        borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'],
-                        borderWidth: 1
-                    }]
-                },
-                options: { scales: { y: { beginAtZero: true } } }
-            });
-        </script>
-        @endif
 
         @if(isset($stockChartData))
         <script>
-            // Grafik Stok Barang (Horizontal Bar Chart)
-            const stockCtx = document.getElementById('stockChart').getContext('2d');
-            const stockChartData = @json($stockChartData);
-            let stockChart = new Chart(stockCtx, {
-                type: 'bar',
-                data: {
-                    labels: stockChartData.labels,
-                    datasets: [{
-                        label: 'Jumlah Stok',
-                        data: stockChartData.data,
-                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    indexAxis: 'y',
-                    scales: { x: { beginAtZero: true } },
-                    plugins: { legend: { display: false } }
-                }
-            });
-
-            // Real-time search functionality
+            // Real-time search functionality untuk tabel
             let searchTimeout;
             const stockSearchInput = document.getElementById('stockSearch');
             const stockLoading = document.getElementById('stockLoading');
             const stockResetBtn = document.getElementById('stockReset');
+            const stockTableBody = document.getElementById('stockTableBody');
 
             stockSearchInput.addEventListener('input', function() {
                 clearTimeout(searchTimeout);
@@ -177,9 +176,8 @@
                 fetch(`{{ route('dashboard.search') }}?search=${encodeURIComponent(searchTerm)}`)
                     .then(response => response.json())
                     .then(data => {
-                        stockChart.data.labels = data.labels;
-                        stockChart.data.datasets[0].data = data.data;
-                        stockChart.update();
+                        // Update tabel dengan data baru
+                        updateTable(data);
                         stockLoading.classList.add('hidden');
                     })
                     .catch(error => {
@@ -188,10 +186,49 @@
                     });
             }
 
-            function resetChart() {
-                stockChart.data.labels = stockChartData.labels;
-                stockChart.data.datasets[0].data = stockChartData.data;
-                stockChart.update();
+            function updateTable(data) {
+                let tableHTML = '';
+                if (data.labels && data.labels.length > 0) {
+                    data.labels.forEach((label, index) => {
+                        const stok = data.data[index];
+                        const isLowStock = stok < 5;
+                        const isCriticalStock = stok < 2;
+                        
+                        let rowClass = '';
+                        let stokClass = 'text-gray-900';
+                        let badge = '';
+                        
+                        if (isCriticalStock) {
+                            rowClass = 'bg-red-50';
+                            stokClass = 'text-red-600 font-bold';
+                            badge = '<span class="ml-1 text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full">KRITIS</span>';
+                        } else if (isLowStock) {
+                            rowClass = 'bg-yellow-50';
+                            stokClass = 'text-yellow-600 font-semibold';
+                            badge = '<span class="ml-1 text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">RENDAH</span>';
+                        }
+                        
+                        tableHTML += `
+                            <tr class="${rowClass}">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${index + 1}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${label}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm ${stokClass}">
+                                    ${stok}${badge}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${data.satuan[index] || 'Unit'}</td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    tableHTML = `
+                        <tr>
+                            <td colspan="4" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                                Tidak ada data ditemukan
+                            </td>
+                        </tr>
+                    `;
+                }
+                stockTableBody.innerHTML = tableHTML;
             }
         </script>
         @endif

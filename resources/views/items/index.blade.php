@@ -12,7 +12,7 @@
                     <div class="mb-4 flex justify-between items-center">
                         <div class="flex gap-4">
                             <a href="{{ route('items.create') }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                                + Tambah Barang
+                                + Tambah Barang Baru
                             </a>
                             
                             <a href="{{ route('items.export') }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded flex items-center">

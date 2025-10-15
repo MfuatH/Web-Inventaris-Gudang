@@ -24,8 +24,8 @@ class DashboardController extends Controller
             $pendingZoomRequests = RequestLinkZoom::where('status', 'pending')->count();
             
             // Hitung total barang masuk dan keluar
-            $totalBarangMasuk = Transaction::where('tipe', 'masuk')->sum('jumlah');
-            $totalBarangKeluar = Transaction::where('tipe', 'keluar')->sum('jumlah');
+            $totalBarangMasuk = Transaction::where('tipe', 'masuk')->count();
+            $totalBarangKeluar = Transaction::where('tipe', 'keluar')->count(); // Hitung berapa kali transaksi keluar
 
             // Data untuk grafik stock barang (dibatasi 15 item)
             $stockQuery = Item::orderBy('nama_barang');

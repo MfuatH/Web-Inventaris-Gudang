@@ -27,11 +27,11 @@
                     <p class="text-3xl font-bold">{{ $pendingZoomRequests }}</p>
                 </div>
                 <div class="bg-white p-6 rounded-lg shadow-sm">
-                    <h3 class="text-lg font-semibold">Total Barang Masuk</h3>
+                    <h3 class="text-lg font-semibold">Total Transaksi Masuk</h3>
                     <p class="text-3xl font-bold text-green-600">{{ $totalBarangMasuk ?? 0 }}</p>
                 </div>
                 <div class="bg-white p-6 rounded-lg shadow-sm">
-                    <h3 class="text-lg font-semibold">Total Barang Keluar</h3>
+                    <h3 class="text-lg font-semibold">Jumlah Transaksi Keluar</h3>
                     <p class="text-3xl font-bold text-red-600">{{ $totalBarangKeluar ?? 0 }}</p>
                 </div>
             </div>

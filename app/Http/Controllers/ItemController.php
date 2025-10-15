@@ -23,7 +23,8 @@ class ItemController extends Controller
                 return $query->where('nama_barang', 'like', "%{$search}%")
                              ->orWhere('kode_barang', 'like', "%{$search}%");
             })
-            ->latest()
+            ->orderBy('jumlah', 'asc')
+            ->orderBy('nama_barang', 'asc')
             ->paginate(10);
             
         return view('items.index', compact('items'));

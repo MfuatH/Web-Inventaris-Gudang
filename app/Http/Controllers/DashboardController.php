@@ -27,15 +27,16 @@ class DashboardController extends Controller
             $totalBarangMasuk = Transaction::where('tipe', 'masuk')->count();
             $totalBarangKeluar = Transaction::where('tipe', 'keluar')->count(); // Hitung berapa kali transaksi keluar
 
-            // Data untuk grafik stock barang (dibatasi 15 item)
-            $stockQuery = Item::orderBy('nama_barang');
+            // Data untuk tabel stock barang menipis (stok < 10, dibatasi 10 item)
+            $stockQuery = Item::where('jumlah', '<', 10)->orderBy('jumlah', 'asc')->orderBy('nama_barang');
             if ($search) {
                 $stockQuery->where('nama_barang', 'like', '%' . $search . '%');
             }
-            $stockItems = $stockQuery->limit(15)->get();
+            $stockItems = $stockQuery->limit(10)->get();
             $stockChartData = [
                 'labels' => $stockItems->pluck('nama_barang'),
                 'data' => $stockItems->pluck('jumlah'),
+                'satuan' => $stockItems->pluck('satuan'),
             ];
 
             // Data khusus Super Admin
@@ -72,17 +73,18 @@ class DashboardController extends Controller
         $search = $request->get('search');
 
         if (in_array($user->role, ['super_admin', 'admin_barang'])) {
-            $stockQuery = Item::orderBy('nama_barang');
+            $stockQuery = Item::where('jumlah', '<', 10)->orderBy('jumlah', 'asc')->orderBy('nama_barang');
             // Only apply search filter if search term is not empty
             if (!empty($search) && trim($search) !== '') {
                 $stockQuery->where('nama_barang', 'like', '%' . trim($search) . '%');
             }
-            // Always limit to 15 items
-            $stockItems = $stockQuery->limit(15)->get();
+            // Always limit to 10 items
+            $stockItems = $stockQuery->limit(10)->get();
             
             return response()->json([
                 'labels' => $stockItems->pluck('nama_barang'),
                 'data' => $stockItems->pluck('jumlah'),
+                'satuan' => $stockItems->pluck('satuan'),
             ]);
         }
 

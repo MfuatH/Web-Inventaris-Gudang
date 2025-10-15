@@ -16,10 +16,10 @@ class BidangSeeder extends Seeder
     {
         $names = [
             'Sekretariat',
-            'Perencanaan',
-            'Keuangan',
-            'Operasional',
-            'Umum',
+            'PSDA',
+            'Irigasi',
+            'SWP',
+            'Binfat',
         ];
 
         foreach ($names as $name) {

@@ -22,7 +22,7 @@
     </style>
 
     <script>
-        let itemIndex = 1; // mulai dari 1 karena baris pertama index-nya 0
+        let itemIndex = 1;
 
         function addRow() {
             const container = document.getElementById('itemsContainer');
@@ -82,7 +82,13 @@
     <div style="backdrop-filter: blur(12px);" class="bg-blur rounded-2xl shadow-2xl overflow-hidden max-w-6xl w-full">
         <div class="p-6 relative min-h-[600px]">
 
-            <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-12 absolute top-6 left-6"> 
+            {{-- LOGO DIPINDAH KE ATAS --}}
+            <div class="w-full flex justify-center mb-4 md:hidden">
+                <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-12">
+            </div>
+
+            {{-- Logo di kiri untuk tampilan desktop --}}
+            <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-12 absolute top-6 left-6 hidden md:block"> 
 
             <div class="hidden md:block absolute left-12 top-12 w-5/12 text-center">
                 <h2 class="text-3xl font-bold text-gray-800 mb-8">Selamat Datang</h2>

@@ -115,25 +115,17 @@ php artisan serve
 ### Placeholder Screenshot
 - Dashboard:
 ```
-![Dashboard](docs/screenshots/dashboard.png)
+![Dashboard](docs/dashboard.png)
 ```
 - Approval Request Barang:
 ```
-![Approval Request Barang](docs/screenshots/approval-request-barang.png)
+![Approval Request Barang](docs/approval-request-barang.png)
 ```
 - Approval Link Zoom:
 ```
-![Approval Link Zoom](docs/screenshots/approval-link-zoom.png)
+![Approval Link Zoom](docs/approval-link-zoom.png)
 ```
 
-Letakkan gambar Anda di `docs/screenshots/` dan perbarui path jika berbeda.
-
----
-
-### Troubleshooting Singkat
-- “Target class [Fruitcake\Cors\HandleCors] does not exist” → gunakan `Illuminate\Http\Middleware\HandleCors` di `app/Http/Kernel.php`.
-- Composer warning `doctrine/cache` abandoned → update/benahi versi `doctrine/dbal` atau abaikan jika tidak mengganggu.
-- `ext-gd` missing untuk Excel → aktifkan extension `gd` di `php.ini`.
 
 ---
 

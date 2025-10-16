@@ -1,7 +1,8 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Edit Barang: {{ $item->nama_barang }}
+        <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight flex items-center gap-2">
+            <i data-lucide="boxes" class="w-5 h-5 text-blue-600"></i>
+            Manajemen Barang
         </h2>
     </x-slot>
 

@@ -1,6 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight flex items-center gap-2">
+            <i data-lucide="history" class="w-5 h-5 text-blue-600"></i>
             Riwayat Transaksi
         </h2>
     </x-slot>

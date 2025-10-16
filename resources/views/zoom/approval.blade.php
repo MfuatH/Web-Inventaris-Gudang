@@ -1,6 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight flex items-center gap-2">
+            <i data-lucide="video" class="w-5 h-5 text-blue-600"></i>
             Approval Request Link Zoom
         </h2>
     </x-slot>

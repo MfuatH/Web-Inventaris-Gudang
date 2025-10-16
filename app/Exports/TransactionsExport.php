@@ -46,7 +46,7 @@ class TransactionsExport implements FromQuery, WithHeadings, WithMapping, Should
             'Kode Barang',
             'Nama Barang',
             'Jumlah',
-            'Nama Pemohon',
+            'Nama Peminta / Admin',
             'Bidang Pemohon',
         ];
     }
@@ -56,6 +56,11 @@ class TransactionsExport implements FromQuery, WithHeadings, WithMapping, Should
      */
     public function map($transaction): array
     {
+        $isIncoming = $transaction->tipe === 'masuk';
+        $nama = $isIncoming
+            ? (optional($transaction->user)->name ?? 'N/A')
+            : (optional($transaction->request)->nama_pemohon ?? optional(optional($transaction->request)->user)->name ?? 'N/A');
+
         return [
             $transaction->id,
             $transaction->tanggal,
@@ -63,8 +68,8 @@ class TransactionsExport implements FromQuery, WithHeadings, WithMapping, Should
             $transaction->item->kode_barang ?? 'N/A',
             $transaction->item->nama_barang ?? 'N/A',
             $transaction->jumlah,
-            $transaction->request->nama_pemohon ?? 'N/A', // Ambil nama pemohon dari request
-            $transaction->request->bidang->nama ?? 'N/A',   // Ambil nama bidang dari request
+            $nama,
+            optional(optional($transaction->request)->bidang)->nama ?? 'N/A',
         ];
     }
 

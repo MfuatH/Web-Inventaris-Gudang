@@ -88,10 +88,10 @@
             </div>
 
             {{-- Logo di kiri untuk tampilan desktop --}}
-            <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-12 absolute top-6 left-6 hidden md:block"> 
-
+            
             <div class="hidden md:block absolute left-12 top-12 w-5/12 text-center">
-                <h2 class="text-3xl font-bold text-gray-800 mb-8">Selamat Datang</h2>
+                <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-12 mx-auto mb-2"> 
+                <h2 class="text-3xl font-bold text-gray-800 mb-1">Selamat Datang</h2>
                 <img src="{{ asset('images/ils.png') }}" class="max-w-xs w-full mx-auto">
             </div>
 

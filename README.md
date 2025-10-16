@@ -112,19 +112,10 @@ php artisan serve
 
 ---
 
-### Placeholder Screenshot
-- Dashboard:
-```
+### Contoh Gambar (docs/)
 ![Dashboard](docs/dashboard.png)
-```
-- Approval Request Barang:
-```
 ![Approval Request Barang](docs/approval-request-barang.png)
-```
-- Approval Link Zoom:
-```
 ![Approval Link Zoom](docs/approval-link-zoom.png)
-```
 
 
 ---

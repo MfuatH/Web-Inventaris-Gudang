@@ -1,64 +1,139 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
-
 <p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="public/images/logo.png" alt="Logo" width="220" />
 </p>
 
-## About Laravel
+## Web Inventaris Gudang – PUSDA
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Aplikasi manajemen inventaris gudang dengan dukungan permintaan barang oleh tamu (guest) tanpa login dan fitur persetujuan admin, termasuk request Link Zoom dan notifikasi WhatsApp berbasis bidang.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Spesifikasi Teknis
+- **Framework**: Laravel 10 (PHP 8.2)
+- **Database**: MySQL/MariaDB
+- **Frontend**: Blade, Tailwind CSS
+- **Auth & Role**: `super_admin`, `admin_barang`
+- **Ekspor**: Maatwebsite/Excel
+- **Notifikasi WhatsApp**: Fonnte API
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Fitur Utama
+- **Guest Request Barang**: Tamu dapat mengajukan permintaan barang tanpa login (nama, NIP opsional, no HP, bidang, pilihan barang sesuai stok).
+- **Guest Request Link Zoom**: Tamu dapat ajukan request Link Zoom (jadwal mulai/selesai, keterangan, bidang). Admin menambahkan link sebelum approve.
+- **Dashboard Admin**:
+  - Kartu ringkas: total item, request barang pending, request Zoom pending, jumlah transaksi masuk, jumlah transaksi keluar.
+  - Tabel “Stok Menipis” (stok < 10, 10 item terendah) dengan indikator kritis/rendah.
+- **Approval Barang & Zoom**: Admin menyetujui permintaan sesuai bidangnya.
+- **Notifikasi WhatsApp**: Otomatis mengirim ke admin bidang terkait saat ada request (barang/Zoom) baru.
+- **Manajemen Pengguna**: Tambah user dengan pilihan `bidang` dari tabel `bidang` dan kolom `no_hp` (untuk WA).
+- **Transaksi**: 
+  - Keluar: tercatat dari approval request barang (menyimpan `request_id`).
+  - Masuk: saat membuat barang baru/menambah stok menyimpan `user_id` admin pelaksana.
+- **Ekspor Excel**: Riwayat transaksi termasuk nama peminta (keluar) atau admin (masuk).
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+### Struktur Data Inti (Ringkas)
+- `items` (barang: nama, kode, satuan, jumlah, lokasi)
+- `request_barang` (permintaan barang: item, jumlah, status, nama_pemohon, nip, no_hp, bidang_id, user_id nullable)
+- `bidang` (master bidang: nama)
+- `request_linkzoom` (nama_pemohon, nip, no_hp, bidang_id, jadwal_mulai/selesai, keterangan, link_zoom nullable, status)
+- `transactions` (request_id nullable, item_id, user_id nullable, jumlah, tipe masuk/keluar, tanggal)
+- `users` (name, email, password, role, bidang string, no_hp nullable)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+Relasi penting:
+- `ItemRequest` → `item` (belongsTo), `bidang` (belongsTo)
+- `RequestLinkZoom` → `bidang` (belongsTo)
+- `Transaction` → `item` (belongsTo), `request` (belongsTo), `user` (belongsTo)
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+### Alur Operasional
+1) **Guest – Dashboard Publik (`/`)**
+   - Pilih: “Request Barang” atau “Request Link Zoom”.
+2) **Guest – Request Barang**
+   - Isi: nama, NIP (opsional), no HP, bidang, pilih barang (hanya stok tersedia), jumlah.
+   - Sistem kirim notifikasi WA ke admin bidang terkait.
+   - Status awal: pending.
+3) **Guest – Request Link Zoom**
+   - Isi: nama, NIP (opsional), no HP, bidang, jadwal mulai/selesai, keterangan.
+   - Admin menambahkan `link_zoom` terlebih dahulu → baru bisa approve.
+   - WA terkirim ke admin bidang terkait saat request dibuat.
+4) **Admin – Approval**
+   - Admin bidang melihat request bidangnya; super admin melihat semua.
+   - Approve barang → stok barang berkurang, tercatat transaksi keluar (mengacu `request_id`).
+   - Approve Zoom → hanya jika `link_zoom` sudah diisi.
+5) **Transaksi**
+   - Masuk: dibuat otomatis saat admin menambah barang baru/menambah stok, menyimpan `user_id` admin.
+   - Keluar: dibuat saat approve request barang, menyimpan `request_id` untuk menampilkan nama peminta.
+6) **Dashboard**
+   - Kartu ringkasan + Tabel stok menipis (10 terendah, < 10).
+7) **Ekspor**
+   - Menu Riwayat Transaksi → Export Excel (memuat nama peminta/admin dan bidang pemohon).
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Instalasi & Konfigurasi
+1) Clone & Install
+```
+composer install
+cp .env.example .env
+php artisan key:generate
+```
+2) Konfigurasi Database di `.env`, lalu migrasi & seeder:
+```
+php artisan migrate --seed
+```
+3) Konfigurasi Fonnte (WhatsApp)
+```
+FONNTE_TOKEN=ISI_TOKEN_ANDA
+```
+4) Aktifkan ekstensi PHP yang diperlukan (Windows – php.ini):
+- extension=gd (untuk Excel/PhpSpreadsheet)
+- extension=zip, extension=mbstring, extension=fileinfo
+5) Jalankan aplikasi
+```
+php artisan serve
+```
 
-## Code of Conduct
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Role & Akses
+- `super_admin`: akses penuh (semua data, approval, master data).
+- `admin_barang`: terbatas pada bidangnya (approval, transaksi terkait bidang).
+- Guest (tanpa login): hanya halaman publik (request barang/Zoom, lihat stok).
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Navigasi & Menu
+- Publik: `Welcome` → Request Barang, Request Link Zoom, Lihat Stok.
+- Admin Sidebar: Approval Barang, Approval Zoom (Approval, Master Pesan), Items, Users, Transaksi, Dashboard.
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Placeholder Screenshot
+- Dashboard:
+```
+![Dashboard](docs/screenshots/dashboard.png)
+```
+- Approval Request Barang:
+```
+![Approval Request Barang](docs/screenshots/approval-request-barang.png)
+```
+- Approval Link Zoom:
+```
+![Approval Link Zoom](docs/screenshots/approval-link-zoom.png)
+```
+
+Letakkan gambar Anda di `docs/screenshots/` dan perbarui path jika berbeda.
+
+---
+
+### Troubleshooting Singkat
+- “Target class [Fruitcake\Cors\HandleCors] does not exist” → gunakan `Illuminate\Http\Middleware\HandleCors` di `app/Http/Kernel.php`.
+- Composer warning `doctrine/cache` abandoned → update/benahi versi `doctrine/dbal` atau abaikan jika tidak mengganggu.
+- `ext-gd` missing untuk Excel → aktifkan extension `gd` di `php.ini`.
+
+---
+

@@ -2,37 +2,69 @@
 
 namespace App\Exports;
 
-use App\Models\Transaction;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\FromQuery;      // PERUBAHAN: Dari FromCollection menjadi FromQuery
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize; // Untuk lebar kolom otomatis
-use Maatwebsite\Excel\Concerns\WithEvents;     // Untuk styling
-use Maatwebsite\Excel\Events\AfterSheet;        // Event setelah sheet dibuat
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Events\AfterSheet;
+use Illuminate\Database\Eloquent\Builder;      // <-- WAJIB TAMBAHKAN INI
 
-class TransactionsExport implements FromCollection, WithHeadings, WithMapping, ShouldAutoSize, WithEvents
+class TransactionsExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSize, WithEvents
 {
-    public function collection()
+    /**
+     * @var Builder
+     */
+    protected $query;
+
+    /**
+     * PERUBAHAN: Buat constructor untuk menerima query yang sudah difilter dari Controller.
+     */
+    public function __construct(Builder $query)
     {
-        return Transaction::with(['item', 'request.user'])->latest()->get();
+        $this->query = $query;
     }
 
+    /**
+     * PERUBAHAN: Gunakan method query() untuk menjalankan query yang diterima.
+     * Method collection() dihapus.
+     */
+    public function query()
+    {
+        return $this->query->latest();
+    }
+
+    /**
+     * PERUBAHAN: Sesuaikan header dengan data tamu.
+     */
     public function headings(): array
     {
         return [
-            'Tanggal', 'Kode Barang', 'Nama Barang', 'Jumlah', 'Tipe', 'User Perequest',
+            'ID Transaksi',
+            'Tanggal',
+            'Tipe',
+            'Kode Barang',
+            'Nama Barang',
+            'Jumlah',
+            'Nama Pemohon',
+            'Bidang Pemohon',
         ];
     }
 
+    /**
+     * PERUBAHAN: Sesuaikan pemetaan data dengan data tamu dari request.
+     */
     public function map($transaction): array
     {
         return [
+            $transaction->id,
             $transaction->tanggal,
-            $transaction->item->kode_barang,
-            $transaction->item->nama_barang,
-            $transaction->jumlah,
             ucfirst($transaction->tipe),
-            $transaction->request->user->name ?? '-',
+            $transaction->item->kode_barang ?? 'N/A',
+            $transaction->item->nama_barang ?? 'N/A',
+            $transaction->jumlah,
+            $transaction->request->nama_pemohon ?? 'N/A', // Ambil nama pemohon dari request
+            $transaction->request->bidang->nama ?? 'N/A',   // Ambil nama bidang dari request
         ];
     }
 
@@ -43,27 +75,24 @@ class TransactionsExport implements FromCollection, WithHeadings, WithMapping, S
     {
         return [
             AfterSheet::class => function(AfterSheet $event) {
+                // PERUBAHAN: Sesuaikan range cell dari F menjadi H karena kolom bertambah
+                $headerRange = 'A1:H1';
+                $fullRange = 'A1:H' . ($event->sheet->getHighestRow());
+
                 // Style untuk header
-                $event->sheet->getStyle('A1:F1')->applyFromArray([
+                $event->sheet->getStyle($headerRange)->applyFromArray([
                     'font' => [
                         'bold' => true,
+                        'color' => ['argb' => 'FFFFFFFF'], // Font putih
                     ],
                     'fill' => [
                         'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                        'startColor' => [
-                            'argb' => 'FF333333', // Warna abu-abu gelap
-                        ],
+                        'startColor' => ['argb' => 'FF333333'], // Latar abu-abu gelap
                     ],
-                    'font' => [
-                        'color' => [
-                            'argb' => 'FFFFFFFF', // Warna font putih
-                        ]
-                    ]
                 ]);
 
-                // Menambahkan garis tepi (border) ke semua sel yang terisi
-                $cellRange = 'A1:F' . ($event->sheet->getHighestRow());
-                $event->sheet->getStyle($cellRange)->applyFromArray([
+                // Menambahkan garis tepi (border) ke semua sel
+                $event->sheet->getStyle($fullRange)->applyFromArray([
                     'borders' => [
                         'allBorders' => [
                             'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
@@ -72,22 +101,19 @@ class TransactionsExport implements FromCollection, WithHeadings, WithMapping, S
                     ],
                 ]);
 
-                // Pewarnaan kondisional untuk kolom 'Tipe' (Kolom E)
+                // Pewarnaan kondisional untuk kolom 'Tipe' (sekarang Kolom C)
                 foreach ($event->sheet->getRowIterator() as $row) {
-                    // Lewati baris header
-                    if ($row->getRowIndex() == 1) {
-                        continue;
-                    }
+                    if ($row->getRowIndex() == 1) continue; // Lewati header
 
-                    $cell = $event->sheet->getCell('E' . $row->getRowIndex());
+                    $cell = $event->sheet->getCell('C' . $row->getRowIndex());
                     $value = $cell->getValue();
                     
                     if ($value == 'Masuk') {
                         $cell->getStyle()->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                            ->getStartColor()->setARGB('FFC6EFCE'); // Warna hijau muda
+                            ->getStartColor()->setARGB('FFC6EFCE'); // Hijau muda
                     } elseif ($value == 'Keluar') {
                         $cell->getStyle()->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                            ->getStartColor()->setARGB('FFFFC7CE'); // Warna merah muda
+                            ->getStartColor()->setARGB('FFFFC7CE'); // Merah muda
                     }
                 }
             },

@@ -20,7 +20,6 @@ class ItemRequest extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'user_id',
         'bidang_id',
         'nama_pemohon',
         'nip',

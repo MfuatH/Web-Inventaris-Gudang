@@ -57,7 +57,6 @@ class GuestController extends Controller
                     }
 
                     $created = ItemRequest::create([
-                        'user_id' => null,
                         'bidang_id' => $validated['bidang_id'],
                         'nama_pemohon' => $validated['nama_pemohon'],
                         'nip' => $validated['nip'] ?? null,

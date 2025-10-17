@@ -7,6 +7,7 @@ use App\Models\Transaction;
 use App\Exports\ItemsExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ItemController extends Controller
@@ -68,6 +69,7 @@ class ItemController extends Controller
 
             Transaction::create([
                 'item_id' => $item->id,
+                'user_id' => Auth::id(),
                 'jumlah' => $item->jumlah,
                 'tipe' => 'masuk',
                 'tanggal' => now(),
@@ -137,6 +139,7 @@ class ItemController extends Controller
             // Catat sebagai transaksi "masuk"
             Transaction::create([
                 'item_id' => $item->id,
+                'user_id' => Auth::id(),
                 'jumlah' => $request->jumlah_tambahan,
                 'tipe' => 'masuk',
                 'tanggal' => now(),

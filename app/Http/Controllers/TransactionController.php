@@ -12,7 +12,7 @@ class TransactionController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $transactionsQuery = Transaction::with(['item', 'request.bidang']);
+        $transactionsQuery = Transaction::with(['item', 'user', 'request.user', 'request.bidang']);
 
         if ($user->role === 'admin_barang') {
             $transactionsQuery->whereHas('request', function ($requestQuery) use ($user) {
@@ -34,7 +34,7 @@ class TransactionController extends Controller
         $user = Auth::user();
         
         // Buat query dasar yang sama seperti di fungsi index()
-        $transactionsQuery = Transaction::with(['item', 'request.bidang', 'request.item']);
+        $transactionsQuery = Transaction::with(['item', 'user', 'request.user', 'request.bidang', 'request.item']);
 
         // Terapkan filter yang sama jika rolenya admin_barang
         if ($user->role === 'admin_barang') {

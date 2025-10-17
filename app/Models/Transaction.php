@@ -16,6 +16,7 @@ class Transaction extends Model
      */
     protected $fillable = [
         'item_id',
+        'user_id',
         'request_id',
         'jumlah',
         'tipe',
@@ -36,5 +37,13 @@ class Transaction extends Model
     public function request()
     {
         return $this->belongsTo(ItemRequest::class);
+    }
+
+    /**
+     * Mendefinisikan relasi ke model User (admin untuk transaksi masuk).
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

@@ -130,7 +130,7 @@
                                                 $isLowStock = $stok < 5;
                                                 $isCriticalStock = $stok < 2;
                                             @endphp
-                                            <tr class="{{ $isCriticalStock ? 'bg-red-50' : ($isLowStock ? 'bg-yellow-50' : '') }}">
+                                            <tr>
                                                 <td class="px-6 py-4 text-sm text-gray-900">{{ $index + 1 }}</td>
                                                 <td class="px-6 py-4 text-sm text-gray-900">{{ $label }}</td>
                                                 <td class="px-6 py-4 text-sm {{ $isCriticalStock ? 'text-red-600 font-bold' : ($isLowStock ? 'text-yellow-600 font-semibold' : 'text-gray-900') }}">
@@ -230,7 +230,7 @@
                             const low = stok < 5;
                             const critical = stok < 2;
                             html += `
-                                <tr class="${critical ? 'bg-red-50' : low ? 'bg-yellow-50' : ''}">
+                                <tr>
                                     <td class="px-6 py-4 text-sm">${i + 1}</td>
                                     <td class="px-6 py-4 text-sm">${label}</td>
                                     <td class="px-6 py-4 text-sm ${critical ? 'text-red-600 font-bold' : low ? 'text-yellow-600 font-semibold' : ''}">

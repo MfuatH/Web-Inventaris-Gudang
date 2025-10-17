@@ -20,12 +20,43 @@ class DashboardController extends Controller
         // Data untuk Super Admin dan Admin Barang
         if (in_array($user->role, ['super_admin', 'admin_barang'])) {
             $totalItems = Item::count();
-            $pendingRequests = ItemRequest::where('status', 'pending')->count();
-            $pendingZoomRequests = RequestLinkZoom::where('status', 'pending')->count();
-            
-            // Hitung total barang masuk dan keluar
-            $totalBarangMasuk = Transaction::where('tipe', 'masuk')->count();
-            $totalBarangKeluar = Transaction::where('tipe', 'keluar')->count(); // Hitung berapa kali transaksi keluar
+
+            if ($user->role === 'super_admin') {
+                // Global scope untuk super admin
+                $pendingRequests = ItemRequest::where('status', 'pending')->count();
+                $pendingZoomRequests = RequestLinkZoom::where('status', 'pending')->count();
+                $totalBarangMasuk = Transaction::where('tipe', 'masuk')->count();
+                $totalBarangKeluar = Transaction::where('tipe', 'keluar')->count();
+            } else {
+                // Scope berdasarkan bidang untuk admin_barang
+                $pendingRequests = ItemRequest::where('status', 'pending')
+                    ->whereHas('bidang', function ($q) use ($user) {
+                        $q->where('nama', $user->bidang);
+                    })
+                    ->count();
+
+                $pendingZoomRequests = RequestLinkZoom::where('status', 'pending')
+                    ->whereHas('bidang', function ($q) use ($user) {
+                        $q->where('nama', $user->bidang);
+                    })
+                    ->count();
+
+                // Transaksi masuk: berdasarkan user admin yang menambah stok (user.bidang)
+                $totalBarangMasuk = Transaction::where('tipe', 'masuk')
+                    ->whereHas('user', function ($q) use ($user) {
+                        $q->where('bidang', $user->bidang);
+                    })
+                    ->count();
+
+                // Transaksi keluar: berdasarkan request.bidang
+                $totalBarangKeluar = Transaction::where('tipe', 'keluar')
+                    ->whereHas('request', function ($rq) use ($user) {
+                        $rq->whereHas('bidang', function ($bq) use ($user) {
+                            $bq->where('nama', $user->bidang);
+                        });
+                    })
+                    ->count();
+            }
 
             // Data untuk tabel stock barang menipis (stok < 10, dibatasi 10 item)
             $stockQuery = Item::where('jumlah', '<', 10)->orderBy('jumlah', 'asc')->orderBy('nama_barang');

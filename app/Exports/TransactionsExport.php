@@ -61,6 +61,12 @@ class TransactionsExport implements FromQuery, WithHeadings, WithMapping, Should
             ? (optional($transaction->user)->name ?? 'N/A')
             : (optional($transaction->request)->nama_pemohon ?? optional(optional($transaction->request)->user)->name ?? 'N/A');
 
+        // Untuk transaksi masuk, ambil bidang dari admin yang menambah barang
+        // Untuk transaksi keluar, ambil bidang dari pemohon
+        $bidang = $isIncoming
+            ? (optional($transaction->user)->bidang ?? 'N/A')
+            : (optional(optional($transaction->request)->bidang)->nama ?? 'N/A');
+
         return [
             $transaction->id,
             $transaction->tanggal,
@@ -69,7 +75,7 @@ class TransactionsExport implements FromQuery, WithHeadings, WithMapping, Should
             $transaction->item->nama_barang ?? 'N/A',
             $transaction->jumlah,
             $nama,
-            optional(optional($transaction->request)->bidang)->nama ?? 'N/A',
+            $bidang,
         ];
     }
 

@@ -36,7 +36,7 @@
                                     <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Kode</th>
                                     <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Nama Barang</th>
                                     <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Satuan</th>
-                                    <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Jumlah</th>
+                                    <th class="text-left py-3 px-4 uppercase font-semibold text-sm whitespace-nowrap">Jumlah</th>
                                     <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Lokasi</th>
                                     <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Keterangan</th>
                                     <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Aksi</th>
@@ -48,11 +48,11 @@
                                         $isLowStock = $item->jumlah < 5;
                                         $isCriticalStock = $item->jumlah < 2;
                                     @endphp
-                                <tr class="border-b hover:bg-gray-50 {{ $isCriticalStock ? 'bg-red-50' : ($isLowStock ? 'bg-yellow-50' : '') }}">
+                                <tr>
                                     <td class="py-3 px-4">{{ $item->kode_barang }}</td>
                                     <td class="py-3 px-4">{{ $item->nama_barang }}</td>
                                     <td class="py-3 px-4">{{ $item->satuan }}</td>
-                                    <td class="py-3 px-4 {{ $isCriticalStock ? 'text-red-600 font-bold' : ($isLowStock ? 'text-yellow-600 font-semibold' : 'text-gray-900') }}">
+                                    <td class="py-3 px-4 whitespace-nowrap {{ $isCriticalStock ? 'text-red-600 font-bold' : ($isLowStock ? 'text-yellow-600 font-semibold' : 'text-gray-900') }}">
                                         {{ $item->jumlah }}
                                         @if($isCriticalStock)
                                             <span class="ml-1 text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full">KRITIS</span>

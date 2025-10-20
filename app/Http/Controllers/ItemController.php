@@ -139,7 +139,7 @@ class ItemController extends Controller
             // Catat sebagai transaksi "masuk"
             Transaction::create([
                 'item_id' => $item->id,
-                'user_id' => Auth::id(),
+                // 'user_id' => Auth::id(),
                 'jumlah' => $request->jumlah_tambahan,
                 'tipe' => 'masuk',
                 'tanggal' => now(),

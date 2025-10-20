@@ -23,7 +23,8 @@ Aplikasi manajemen inventaris gudang dengan dukungan permintaan barang oleh tamu
 - **Guest Request Link Zoom**: Tamu dapat ajukan request Link Zoom (jadwal mulai/selesai, keterangan, bidang). Admin menambahkan link sebelum approve.
 - **Dashboard Admin**:
   - Kartu ringkas: total item, request barang pending, request Zoom pending, jumlah transaksi masuk, jumlah transaksi keluar.
-  - Tabel “Stok Menipis” (stok < 10, 10 item terendah) dengan indikator kritis/rendah.
+  - **Scoping berdasarkan role**: `super_admin` melihat semua data, `admin_barang` hanya melihat data bidangnya.
+  - Tabel "Stok Menipis" (stok < 10, 10 item terendah) dengan indikator kritis/rendah.
 - **Approval Barang & Zoom**: Admin menyetujui permintaan sesuai bidangnya.
 - **Notifikasi WhatsApp**: Otomatis mengirim ke admin bidang terkait saat ada request (barang/Zoom) baru.
 - **Manajemen Pengguna**: Tambah user dengan pilihan `bidang` dari tabel `bidang` dan kolom `no_hp` (untuk WA).
@@ -69,6 +70,7 @@ Relasi penting:
    - Keluar: dibuat saat approve request barang, menyimpan `request_id` untuk menampilkan nama peminta.
 6) **Dashboard**
    - Kartu ringkasan + Tabel stok menipis (10 terendah, < 10).
+   - **Role-based scoping**: `super_admin` melihat semua, `admin_barang` hanya bidangnya.
 7) **Ekspor**
    - Menu Riwayat Transaksi → Export Excel (memuat nama peminta/admin dan bidang pemohon).
 
@@ -112,10 +114,37 @@ php artisan serve
 
 ---
 
-### Contoh Gambar (docs/)
-![Dashboard](docs/dashboard.png)
+### Screenshots Aplikasi
+
+#### Halaman Login
+![Login Page](docs/login-page.png)
+
+#### Dashboard Guest
+![Dashboard Guest](docs/dashboard-guesr.png)
+
+#### Dashboard Super Admin
+![Dashboard Super Admin](docs/dashboard-superadmin.png)
+
+#### Form Request Barang
+![Form Request Barang](docs/form-req-barang.png)
+
+#### Form Request Link Zoom
+![Form Request Link Zoom](docs/form-req-link-zoom.png)
+
+#### Halaman Approval Request Barang
 ![Approval Request Barang](docs/approval-request-barang.png)
+
+#### Halaman Approval Link Zoom
 ![Approval Link Zoom](docs/approval-link-zoom.png)
+
+#### Halaman Manajemen Barang
+![Manajemen Barang](docs/halaman-manajemen-barang.png)
+
+#### Halaman Riwayat Transaksi
+![Riwayat Transaksi](docs/halaman-riwayat-transaksi.png)
+
+#### Halaman Master Pesan
+![Master Pesan](docs/halaman-master-pesan.png)
 
 
 ---

@@ -31,10 +31,12 @@ class UserController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
             'no_hp' => ['nullable', 'string', 'max:20'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            // Role 'user' dihapus dari validasi
             'role' => ['required', 'in:admin_barang,super_admin'],
-            'bidang' => ['nullable', 'exists:bidang,nama'],
+            'bidang_id' => ['required', 'exists:bidang,id'],
         ]);
+
+        // Ambil nama bidang dari ID
+        $bidang = Bidang::find($request->bidang_id);
 
         User::create([
             'name' => $request->name,
@@ -42,8 +44,7 @@ class UserController extends Controller
             'no_hp' => $request->no_hp,
             'password' => Hash::make($request->password),
             'role' => $request->role,
-            // Logika disesuaikan: hanya admin_barang yang punya bidang
-            'bidang' => ($request->role === 'admin_barang') ? $request->bidang : null,
+            'bidang' => $bidang->nama, // Simpan nama bidang
         ]);
 
         return redirect()->route('users.index')->with('success', 'Pengguna baru berhasil ditambahkan.');

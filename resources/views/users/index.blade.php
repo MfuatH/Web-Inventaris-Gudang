@@ -1,6 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight flex items-center gap-2">
+            <i data-lucide="users" class="w-5 h-5 text-blue-600"></i>
             Manajemen User
         </h2>
     </x-slot>
@@ -31,20 +32,27 @@
                             </thead>
                             <tbody class="text-gray-700">
                                 @forelse ($users as $user)
-                                <tr class="border-b hover:bg-gray-50">
+                                <tr class="border-b hover:bg-gray-50 transition duration-150">
                                     <td class="py-3 px-4">{{ $user->name }}</td>
                                     <td class="py-3 px-4">{{ $user->email }}</td>
                                     <td class="py-3 px-4">{{ $user->no_hp ?? '-' }}</td>
                                     <td class="py-3 px-4">{{ $user->role }}</td>
                                     <td class="py-3 px-4">{{ $user->bidang ?? '-' }}</td>
                                     <td class="py-3 px-4 whitespace-nowrap">
-                                        <a href="{{ route('users.edit', $user->id) }}" class="text-yellow-500 hover:text-yellow-700 font-semibold">Edit</a>
+                                        <a href="{{ route('users.edit', $user->id) }}" 
+                                           class="text-yellow-500 hover:text-yellow-700 font-semibold transition duration-150">Edit</a>
                                         
                                         @if(auth()->id() != $user->id)
-                                        <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="inline-block ml-2" onsubmit="return confirm('Yakin hapus pengguna ini?');">
+                                        <form action="{{ route('users.destroy', $user->id) }}" 
+                                              method="POST" 
+                                              class="inline-block ml-2" 
+                                              onsubmit="return confirm('Yakin hapus pengguna ini?');">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="text-red-500 hover:text-red-700 font-semibold">Hapus</button>
+                                            <button type="submit" 
+                                                    class="text-red-500 hover:text-red-700 font-semibold transition duration-150">
+                                                Hapus
+                                            </button>
                                         </form>
                                         @endif
                                     </td>
@@ -65,4 +73,10 @@
             </div>
         </div>
     </div>
+
+    {{-- Script untuk render icon Lucide --}}
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        lucide.createIcons();
+    </script>
 </x-app-layout>

@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Exception;
 
 class ZoomController extends Controller
 {
@@ -132,25 +133,31 @@ class ZoomController extends Controller
     /**
      * Menolak request link zoom.
      */
-    public function reject(RequestLinkZoom $request)
+    public function reject(RequestLinkZoom $zoomRequest)
     {
         $user = Auth::user();
 
-        // Validasi hak akses
+        // Load relasi bidang jika belum di-load
+        if (!$zoomRequest->relationLoaded('bidang')) {
+            $zoomRequest->load('bidang');
+        }
+
+        // Validasi hak akses - menggunakan logika yang sama dengan method lain
         if ($user->role === 'admin_barang') {
-            if (!$request->bidang || $user->bidang !== $request->bidang->nama) {
+            $reqBidangNama = optional($zoomRequest->bidang)->nama;
+            if ($reqBidangNama === null || $user->bidang !== $reqBidangNama) {
                 abort(403, 'ANDA TIDAK BERHAK MENOLAK REQUEST DARI BIDANG INI.');
             }
         }
 
         try {
-            $request->update(['status' => 'rejected']);
+            $zoomRequest->update(['status' => 'rejected']);
             
             // Kirim notifikasi WA ke pemohon
-            if ($request->no_hp) {
+            if ($zoomRequest->no_hp) {
                 $wa = app(\App\Services\WhatsAppService::class);
-                $message = "[Request Link Zoom Ditolak]\nMaaf, request link zoom Anda ditolak karena link zoom sedang tidak tersedia.\nNama Rapat: {$request->nama_rapat}\nJadwal: " . $request->jadwal_mulai->format('d-m-Y H:i');
-                $wa->sendMessage($request->no_hp, $message);
+                $message = "[Request Link Zoom Ditolak]\nMaaf, request link zoom Anda ditolak karena link zoom sedang tidak tersedia.\nNama Rapat: {$zoomRequest->nama_rapat}\nJadwal: " . $zoomRequest->jadwal_mulai->format('d-m-Y H:i');
+                $wa->sendMessage($zoomRequest->no_hp, $message);
             }
         } catch (Exception $e) {
             return back()->withErrors(['error' => $e->getMessage()]);

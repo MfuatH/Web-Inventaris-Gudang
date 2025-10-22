@@ -35,11 +35,18 @@
                                 <td class="py-3 px-4">{{ ucfirst($request->status) }}</td>
                                 <td class="py-3 px-4">
                                     @if($request->status == 'pending')
-                                    <form action="{{ route('requests.approve', $request->id) }}" method="POST" class="inline-block">
-                                        @csrf
-                                        @method('PUT')
-                                        <button type="submit" class="text-green-500 hover:text-green-700">Approve</button>
-                                    </form>
+                                    <div class="flex space-x-2">
+                                        <form action="{{ route('requests.approve', $request->id) }}" method="POST" class="inline-block">
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="submit" class="text-green-500 hover:text-green-700">Approve</button>
+                                        </form>
+                                        <form action="{{ route('requests.reject', $request->id) }}" method="POST" class="inline-block">
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="submit" class="text-red-500 hover:text-red-700" onclick="return confirm('Yakin ingin menolak request ini?')">Reject</button>
+                                        </form>
+                                    </div>
                                     @else
                                     -
                                     @endif

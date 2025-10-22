@@ -125,13 +125,52 @@ class RequestController extends Controller
                     'jumlah'     => $request->jumlah_request,
                     'tipe'       => 'keluar',
                     'tanggal'    => now(),
+                    'user_id'    => Auth::id(), // Added user_id for outgoing transactions
                 ]);
             });
+
+            // Kirim notifikasi WA ke pemohon
+            if ($request->no_hp) {
+                $wa = app(\App\Services\WhatsAppService::class);
+                $message = "[Request Barang Disetujui]\nRequest barang Anda telah disetujui dan sedang disiapkan.\nBarang: {$request->item->nama_barang}\nJumlah: {$request->jumlah_request}\nTanggal: " . $request->created_at->format('d-m-Y H:i');
+                $wa->sendMessage($request->no_hp, $message);
+            }
         } catch (Exception $e) {
             return back()->withErrors(['error' => $e->getMessage()]);
         }
 
         return redirect()->route('requests.index')->with('success', 'Permintaan berhasil disetujui.');
+    }
+
+    /**
+     * Menolak sebuah request (dengan validasi hak akses).
+     */
+    public function reject(ItemRequest $request)
+    {
+        $admin = Auth::user();
+
+        // PERBAIKAN: Validasi hak akses admin barang disesuaikan
+        // Cek bidang admin dengan bidang yang ada pada request
+        if ($admin->role === 'admin_barang') {
+            if (!$request->bidang || $admin->bidang !== $request->bidang->nama) {
+                abort(403, 'ANDA TIDAK BERHAK MENOLAK REQUEST DARI BIDANG INI.');
+            }
+        }
+
+        try {
+            $request->update(['status' => 'rejected']);
+            
+            // Kirim notifikasi WA ke pemohon
+            if ($request->no_hp) {
+                $wa = app(\App\Services\WhatsAppService::class);
+                $message = "[Request Barang Ditolak]\nMaaf, request barang Anda ditolak karena stok tidak mencukupi.\nBarang: {$request->item->nama_barang}\nJumlah: {$request->jumlah_request}\nTanggal: " . $request->created_at->format('d-m-Y H:i');
+                $wa->sendMessage($request->no_hp, $message);
+            }
+        } catch (Exception $e) {
+            return back()->withErrors(['error' => $e->getMessage()]);
+        }
+
+        return redirect()->route('requests.index')->with('success', 'Permintaan berhasil ditolak.');
     }
     
     // --- FUNGSI DI BAWAH INI TIDAK LAGI DIGUNAKAN UNTUK SISTEM TAMU ---

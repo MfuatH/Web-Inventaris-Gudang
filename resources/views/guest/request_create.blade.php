@@ -30,16 +30,19 @@
             const newRow = document.createElement('div');
             newRow.classList.add('item-row', 'grid', 'grid-cols-12', 'gap-2');
             newRow.innerHTML = `
-                <div class="col-span-7">
-                    <select name="items[${itemIndex}][item_id]" class="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm" required>
+                <div class="col-span-5">
+                    <select name="items[${itemIndex}][item_id]" class="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm" required onchange="updateSatuan(this)">
                         <option value="">-- Pilih Barang --</option>
                         @foreach($items as $item)
-                            <option value="{{ $item->id }}">{{ $item->nama_barang }} (stok: {{ $item->jumlah }})</option>
+                            <option value="{{ $item->id }}" data-satuan="{{ $item->satuan }}">{{ $item->nama_barang }} (stok: {{ $item->jumlah }})</option>
                         @endforeach
                     </select>
                 </div>
-                <div class="col-span-4">
+                <div class="col-span-3">
                     <input type="number" min="1" name="items[${itemIndex}][jumlah_request]" class="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm" placeholder="Jumlah" required />
+                </div>
+                <div class="col-span-3 flex items-center">
+                    <span class="text-sm text-gray-600 satuan-display">-</span>
                 </div>
                 <div class="col-span-1 flex items-center">
                     <button type="button" class="w-full py-1.5 border rounded-md hover:bg-red-500 hover:text-white" onclick="removeRow(this)">-</button>
@@ -64,6 +67,13 @@
                 if (inputs.length > 0) inputs[0].setAttribute('name', `items[${index}][jumlah_request]`);
             });
             itemIndex = rows.length;
+        }
+
+        function updateSatuan(selectElement) {
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+            const satuan = selectedOption.getAttribute('data-satuan');
+            const satuanDisplay = selectElement.closest('.item-row').querySelector('.satuan-display');
+            satuanDisplay.textContent = satuan || '-';
         }
     </script>
 </head>
@@ -136,18 +146,27 @@
                                 <h2 class="font-semibold text-gray-700 text-sm">Barang yang diminta</h2>
                                 <button type="button" onclick="addRow()" class="px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-xs shadow">Tambah</button>
                             </div>
+                            <div class="grid grid-cols-12 gap-2 mb-2 text-xs font-semibold text-gray-600">
+                                <div class="col-span-5">Nama Barang</div>
+                                <div class="col-span-3">Jumlah</div>
+                                <div class="col-span-3">Satuan</div>
+                                <div class="col-span-1">Aksi</div>
+                            </div>
                             <div id="itemsContainer" class="space-y-2">
                                 <div class="item-row grid grid-cols-12 gap-2">
-                                    <div class="col-span-7">
-                                        <select name="items[0][item_id]" class="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm" required>
+                                    <div class="col-span-5">
+                                        <select name="items[0][item_id]" class="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm" required onchange="updateSatuan(this)">
                                             <option value="">-- Pilih Barang --</option>
                                             @foreach($items as $item)
-                                                <option value="{{ $item->id }}">{{ $item->nama_barang }} (stok: {{ $item->jumlah }})</option>
+                                                <option value="{{ $item->id }}" data-satuan="{{ $item->satuan }}">{{ $item->nama_barang }} (stok: {{ $item->jumlah }})</option>
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-span-4">
+                                    <div class="col-span-3">
                                         <input type="number" min="1" name="items[0][jumlah_request]" class="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm" placeholder="Jumlah" required />
+                                    </div>
+                                    <div class="col-span-3 flex items-center">
+                                        <span class="text-sm text-gray-600 satuan-display">-</span>
                                     </div>
                                     <div class="col-span-1 flex items-center">
                                         <button type="button" class="w-full py-1.5 border rounded-md hover:bg-red-500 hover:text-white" onclick="removeRow(this)">-</button>

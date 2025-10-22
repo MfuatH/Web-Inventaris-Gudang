@@ -26,6 +26,7 @@
                                 <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Peminta</th>
                                 <th class="text-left py-3 px-4 uppercase font-semibold text-sm">No HP</th>
                                 <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Bidang</th>
+                                <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Nama Rapat</th>
                                 <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Jadwal Mulai</th>
                                 <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Link Zoom</th>
                                 <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Status</th> {{-- <-- KOLOM BARU --}}
@@ -38,6 +39,7 @@
                                 <td class="py-3 px-4">{{ $request->nama_pemohon }}</td>
                                 <td class="py-3 px-4">{{ $request->no_hp }}</td>
                                 <td class="py-3 px-4">{{ optional($request->bidang)->nama ?? '-' }}</td>
+                                <td class="py-3 px-4">{{ $request->nama_rapat ?? '-' }}</td>
                                 <td class="py-3 px-4">{{ $request->jadwal_mulai->format('d-m-Y H:i') }}</td>
                                 <td class="py-3 px-4">
                                     @if($request->link_zoom)
@@ -66,15 +68,22 @@
                                 <td class="py-3 px-4">
                                     {{-- Aksi hanya ditampilkan jika status masih pending --}}
                                     @if($request->status == 'pending')
-                                        @if($request->link_zoom)
-                                            <form action="{{ route('zoom.approve', $request->id) }}" method="POST" class="inline-block">
+                                        <div class="flex space-x-2">
+                                            @if($request->link_zoom)
+                                                <form action="{{ route('zoom.approve', $request->id) }}" method="POST" class="inline-block">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <button type="submit" class="font-semibold text-green-600 hover:text-green-800">Approve</button>
+                                                </form>
+                                            @else
+                                                <button onclick="openLinkModal({{ $request->id }})" class="font-semibold text-blue-600 hover:text-blue-800">Masukkan Link</button>
+                                            @endif
+                                            <form action="{{ route('zoom.reject', $request->id) }}" method="POST" class="inline-block">
                                                 @csrf
                                                 @method('PUT')
-                                                <button type="submit" class="font-semibold text-green-600 hover:text-green-800">Approve</button>
+                                                <button type="submit" class="font-semibold text-red-600 hover:text-red-800" onclick="return confirm('Yakin ingin menolak request ini?')">Reject</button>
                                             </form>
-                                        @else
-                                            <button onclick="openLinkModal({{ $request->id }})" class="font-semibold text-blue-600 hover:text-blue-800">Masukkan Link</button>
-                                        @endif
+                                        </div>
                                     @else
                                         <span class="text-gray-400">Selesai</span>
                                     @endif
@@ -82,7 +91,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="7" class="text-center py-4">Tidak ada permintaan Link Zoom yang masuk.</td> {{-- <-- Colspan diubah --}}
+                                <td colspan="8" class="text-center py-4">Tidak ada permintaan Link Zoom yang masuk.</td> {{-- <-- Colspan diubah --}}
                             </tr>
                             @endforelse
                         </tbody>

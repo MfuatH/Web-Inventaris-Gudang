@@ -21,6 +21,7 @@ class RequestLinkZoom extends Model
         'jadwal_mulai',
         'jadwal_selesai',
         'keterangan',
+        'nama_rapat',
         'status',
     ];
 

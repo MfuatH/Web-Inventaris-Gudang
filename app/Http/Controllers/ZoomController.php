@@ -130,6 +130,36 @@ class ZoomController extends Controller
     }
 
     /**
+     * Menolak request link zoom.
+     */
+    public function reject(RequestLinkZoom $request)
+    {
+        $user = Auth::user();
+
+        // Validasi hak akses
+        if ($user->role === 'admin_barang') {
+            if (!$request->bidang || $user->bidang !== $request->bidang->nama) {
+                abort(403, 'ANDA TIDAK BERHAK MENOLAK REQUEST DARI BIDANG INI.');
+            }
+        }
+
+        try {
+            $request->update(['status' => 'rejected']);
+            
+            // Kirim notifikasi WA ke pemohon
+            if ($request->no_hp) {
+                $wa = app(\App\Services\WhatsAppService::class);
+                $message = "[Request Link Zoom Ditolak]\nMaaf, request link zoom Anda ditolak karena link zoom sedang tidak tersedia.\nNama Rapat: {$request->nama_rapat}\nJadwal: " . $request->jadwal_mulai->format('d-m-Y H:i');
+                $wa->sendMessage($request->no_hp, $message);
+            }
+        } catch (Exception $e) {
+            return back()->withErrors(['error' => $e->getMessage()]);
+        }
+
+        return redirect()->route('zoom.approval')->with('success', 'Request Link Zoom berhasil ditolak.');
+    }
+
+    /**
      * Menampilkan halaman master pesan
      */
     public function masterPesan()

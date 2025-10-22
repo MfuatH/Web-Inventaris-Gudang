@@ -53,13 +53,15 @@ Route::middleware(['auth'])->group(function () {
         // Route untuk export barang
         Route::get('/items/export', [ItemController::class, 'export'])->name('items.export');
         Route::put('/requests/{request}/approve', [RequestController::class, 'approve'])->name('requests.approve');
+        Route::put('/requests/{request}/reject', [RequestController::class, 'reject'])->name('requests.reject');
         
         // Routes untuk Zoom
         Route::get('/zoom/approval', [ZoomController::class, 'approval'])->name('zoom.approval');
         // Route::put('/zoom/{request}/add-link', [ZoomController::class, 'addLink'])->name('zoom.add_link');
         // Route::put('/zoom/{request}/approve', [ZoomController::class, 'approve'])->name('zoom.approve');
         Route::put('/zoom/{zoomRequest}/add-link', [ZoomController::class, 'addLink'])->name('zoom.addLink');
-Route::put('/zoom/{zoomRequest}/approve', [ZoomController::class, 'approve'])->name('zoom.approve');
+        Route::put('/zoom/{zoomRequest}/approve', [ZoomController::class, 'approve'])->name('zoom.approve');
+        Route::put('/zoom/{zoomRequest}/reject', [ZoomController::class, 'reject'])->name('zoom.reject');
         Route::get('/zoom/master-pesan', [ZoomController::class, 'masterPesan'])->name('zoom.master_pesan');
         Route::post('/zoom/master-pesan', [ZoomController::class, 'storeMasterPesan'])->name('zoom.master_pesan.store');
         

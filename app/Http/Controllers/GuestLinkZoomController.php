@@ -24,6 +24,7 @@ class GuestLinkZoomController extends Controller
             'nip' => 'nullable|string|max:50',
             'no_hp' => 'required|string|max:20',
             'bidang_id' => 'required|exists:bidang,id',
+            'nama_rapat' => 'required|string|max:255',
             'jadwal_mulai' => 'required|date',
             'jadwal_selesai' => 'nullable|date|after_or_equal:jadwal_mulai',
             'keterangan' => 'nullable|string',

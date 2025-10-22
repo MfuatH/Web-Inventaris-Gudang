@@ -120,6 +120,13 @@
                                 </div>
                             </div>
 
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                                    <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m-9 0h10M7 4v16a1 1 0 001 1h8a1 1 0 001-1V4M7 4H5a1 1 0 00-1 1v16a1 1 0 001 1h14a1 1 0 001-1V5a1 1 0 00-1-1h-2" /></svg>
+                                </span>
+                                <input name="nama_rapat" value="{{ old('nama_rapat') }}" class="w-full border border-gray-300 rounded-md px-10 py-1.5 text-sm" placeholder="Nama Rapat" required />
+                            </div>
+
                             <div>
                                 <textarea name="keterangan" class="w-full border border-gray-300 rounded-md px-3 py-1.5 text-sm" rows="2" placeholder="Keterangan Rapat (opsional)">{{ old('keterangan') }}</textarea>
                             </div>

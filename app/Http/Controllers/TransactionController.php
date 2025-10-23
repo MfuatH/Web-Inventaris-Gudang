@@ -15,9 +15,21 @@ class TransactionController extends Controller
         $transactionsQuery = Transaction::with(['item', 'user', 'request.user', 'request.bidang']);
 
         if ($user->role === 'admin_barang') {
-            $transactionsQuery->whereHas('request', function ($requestQuery) use ($user) {
-                $requestQuery->whereHas('bidang', function ($bidangQuery) use ($user) {
-                    $bidangQuery->where('nama', $user->bidang);
+            // Filter untuk admin barang: hanya menampilkan transaksi masuk sesuai bidangnya
+            $transactionsQuery->where(function ($query) use ($user) {
+                // Transaksi masuk: filter berdasarkan user yang login (admin barang bidang tersebut)
+                $query->where(function ($subQuery) use ($user) {
+                    $subQuery->where('tipe', 'masuk')
+                             ->where('user_id', $user->id);
+                })
+                // Transaksi keluar: filter berdasarkan request dari bidang yang sama
+                ->orWhere(function ($subQuery) use ($user) {
+                    $subQuery->where('tipe', 'keluar')
+                             ->whereHas('request', function ($requestQuery) use ($user) {
+                                 $requestQuery->whereHas('bidang', function ($bidangQuery) use ($user) {
+                                     $bidangQuery->where('nama', $user->bidang);
+                                 });
+                             });
                 });
             });
         }
@@ -38,9 +50,21 @@ class TransactionController extends Controller
 
         // Terapkan filter yang sama jika rolenya admin_barang
         if ($user->role === 'admin_barang') {
-            $transactionsQuery->whereHas('request', function ($requestQuery) use ($user) {
-                $requestQuery->whereHas('bidang', function ($bidangQuery) use ($user) {
-                    $bidangQuery->where('nama', $user->bidang);
+            // Filter untuk admin barang: hanya menampilkan transaksi masuk sesuai bidangnya
+            $transactionsQuery->where(function ($query) use ($user) {
+                // Transaksi masuk: filter berdasarkan user yang login (admin barang bidang tersebut)
+                $query->where(function ($subQuery) use ($user) {
+                    $subQuery->where('tipe', 'masuk')
+                             ->where('user_id', $user->id);
+                })
+                // Transaksi keluar: filter berdasarkan request dari bidang yang sama
+                ->orWhere(function ($subQuery) use ($user) {
+                    $subQuery->where('tipe', 'keluar')
+                             ->whereHas('request', function ($requestQuery) use ($user) {
+                                 $requestQuery->whereHas('bidang', function ($bidangQuery) use ($user) {
+                                     $bidangQuery->where('nama', $user->bidang);
+                                 });
+                             });
                 });
             });
         }

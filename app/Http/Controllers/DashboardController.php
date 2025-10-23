@@ -105,11 +105,11 @@ class DashboardController extends Controller
 
         if (in_array($user->role, ['super_admin', 'admin_barang'])) {
             $stockQuery = Item::where('jumlah', '<', 10)->orderBy('jumlah', 'asc')->orderBy('nama_barang');
-            // Only apply search filter if search term is not empty
+            
             if (!empty($search) && trim($search) !== '') {
                 $stockQuery->where('nama_barang', 'like', '%' . trim($search) . '%');
             }
-            // Always limit to 10 items
+            
             $stockItems = $stockQuery->limit(10)->get();
             
             return response()->json([
@@ -121,11 +121,11 @@ class DashboardController extends Controller
 
         if ($user->role === 'user') {
             $availableQuery = Item::where('jumlah', '>', 0)->orderBy('nama_barang');
-            // Only apply search filter if search term is not empty
+            
             if (!empty($search) && trim($search) !== '') {
                 $availableQuery->where('nama_barang', 'like', '%' . trim($search) . '%');
             }
-            // Always limit to 15 items
+            
             $availableItems = $availableQuery->limit(15)->get();
             
             return response()->json([
